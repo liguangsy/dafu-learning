@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="大福的学习闯关">
+  <meta name="theme-color" content="#fff8ed">
+  <title>大福的学习闯关 · 优尔幼儿园复习跟踪工作台</title>
+  <style>
+    :root {
+      --bg-page: #fffaf2;
+      --bg-card: #ffffff;
+      --bg-subtle: #fef3e2;
+      --bg-accent: #eef6ff;
+      --text-main: #1e293b;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+      --brand-primary: #f97316;
+      --brand-primary-hover: #ea580c;
+      --brand-secondary: #0ea5e9;
+      --status-todo-bg: #f1f5f9;
+      --status-todo-text: #475569;
+      --status-review-bg: #fef3c7;
+      --status-review-text: #b45309;
+      --status-review-border: #f59e0b;
+      --status-done-bg: #dcfce7;
+      --status-done-text: #15803d;
+      --status-done-border: #22c55e;
+      --aid-bg: #f3e8ff;
+      --aid-text: #6b21a8;
+      --aid-border: #d8b4fe;
+      --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-pill: 999px;
+      --progress-pct: 0%;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 4.5rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Native Modal Dialog Best Practices */
+    dialog:modal {
+      overscroll-behavior: contain;
+      border: none;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+      max-width: min(680px, 94vw);
+      max-height: 88vh;
+      width: 100%;
+      margin: auto;
+      padding: 0;
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+
+    dialog::backdrop {
+      overflow: hidden;
+      overscroll-behavior: contain;
+      background-color: rgba(15, 23, 42, 0.55);
+      backdrop-filter: blur(4px);
+    }
+
+    .dialog-shell {
+      display: flex;
+      flex-direction: column;
+      max-height: 88vh;
+    }
+
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 1.35rem;
+      border-bottom: 1px solid var(--border-soft);
+      background: var(--bg-subtle);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .dialog-header h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .dialog-body {
+      padding: 1.35rem;
+      overflow-y: auto;
+    }
+
+    .dialog-close-btn {
+      background: #ffffff;
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-pill);
+      padding: 0.38rem 0.85rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* Header & Top Bar */
+    .site-header {
+      background: linear-gradient(135deg, #fff3e0 0%, #e0f2fe 100%);
+      border-bottom: 2px solid #fed7aa;
+      padding: 1.1rem 1rem 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .brand-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.65rem;
+    }
+
+    .brand-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    .brand-avatar {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #fb923c, #f97316);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-title-group h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .actor-toggle {
+      display: inline-flex;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 0.2rem;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .actor-btn {
+      border: none;
+      background: transparent;
+      padding: 0.32rem 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .actor-btn[aria-pressed="true"] {
+      background: var(--brand-primary);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(249, 115, 22, 0.3);
+    }
+
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: var(--text-main);
+      padding: 0.42rem 0.85rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill-btn:hover {
+      border-color: var(--brand-primary);
+      color: var(--brand-primary-hover);
+    }
+
+    .sync-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.38rem 0.75rem;
+      border-radius: var(--radius-pill);
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      cursor: pointer;
+    }
+
+    .sync-badge[data-sync-state="syncing"] {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+
+    .sync-badge[data-sync-state="offline"] {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    /* Navigation & Progress Bar */
+    .control-bar {
+      max-width: 1180px;
+      margin: 1rem auto 0;
+      padding: 0 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .view-switcher-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--bg-card);
+      padding: 0.85rem 1.1rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-soft);
+    }
+
+    .mode-tabs {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 0.25rem;
+      border-radius: var(--radius-md);
+      gap: 0.25rem;
+    }
+
+    .mode-tab {
+      border: none;
+      background: transparent;
+      padding: 0.48rem 0.95rem;
+      border-radius: 9px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .mode-tab[aria-selected="true"] {
+      background: #ffffff;
+      color: var(--brand-primary-hover);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    .week-selector-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.5rem;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .week-select {
+      padding: 0.52rem 0.9rem;
+      border-radius: var(--radius-md);
+      border: 2px solid #fdba74;
+      background: #fff7ed;
+      color: #9a3412;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 225px;
+    }
+
+    .nav-step-btn {
+      border: 1px solid var(--border-soft);
+      background: #ffffff;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text-main);
+    }
+
+    .nav-step-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* Progress Hero Card */
+    .progress-dashboard {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.2rem;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .progress-bar-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .progress-title-line {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .progress-title-line h2 {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .progress-stats-text {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--brand-primary-hover);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: var(--progress-pct, 0%);
+      background: linear-gradient(90deg, #fb923c, #22c55e);
+      border-radius: var(--radius-pill);
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .aids-summary-bar {
+      margin-top: 0.35rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+    }
+
+    .aids-summary-label {
+      font-weight: 700;
+      color: var(--aid-text);
+    }
+
+    .aid-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: var(--aid-bg);
+      color: var(--aid-text);
+      border: 1px solid var(--aid-border);
+      padding: 0.16rem 0.6rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .quick-badges {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      padding: 0.45rem 0.85rem;
+      border-radius: var(--radius-md);
+      min-width: 78px;
+    }
+
+    .stat-pill-num {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #b45309;
+    }
+
+    .stat-pill-label {
+      font-size: 0.73rem;
+      color: #92400e;
+      font-weight: 600;
+    }
+
+    /* Search & Filter Bar */
+    .filter-search-bar {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: 0.8rem 1.1rem;
+      border: 1px solid var(--border-soft);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .filter-btn {
+      border: 1px solid var(--border-soft);
+      background: #f8fafc;
+      color: var(--text-secondary);
+      padding: 0.35rem 0.75rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .filter-btn[aria-pressed="true"] {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex: 1;
+      min-width: 210px;
+      max-width: 340px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.45rem 0.85rem;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      font-size: 0.86rem;
+    }
+
+    /* Main Content Grid */
+    .main-container {
+      max-width: 1180px;
+      margin: 1rem auto 0;
+      padding: 0 1rem;
+    }
+
+    .category-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+      padding: 0 0.25rem;
+    }
+
+    .category-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 0.2rem 0.65rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: hsl(var(--cat-hue, 210) 85% 93%);
+      color: hsl(var(--cat-hue, 210) 75% 30%);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Task Card */
+    .task-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border-soft);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .task-card[data-status="done"] {
+      border-color: #86efac;
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 35%);
+    }
+
+    .task-card[data-status="review"] {
+      border-color: #fcd34d;
+      background: linear-gradient(180deg, #fffbeb 0%, #ffffff 35%);
+    }
+
+    .card-top-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .subject-tag-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .subject-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .week-ref-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.15rem 0.55rem;
+      border-radius: var(--radius-pill);
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    /* 3-State Status Switcher */
+    .status-group {
+      display: inline-flex;
+      background: #f1f5f9;
+      padding: 0.18rem;
+      border-radius: var(--radius-pill);
+      gap: 0.15rem;
+      flex-shrink: 0;
+    }
+
+    .status-btn {
+      border: none;
+      background: transparent;
+      padding: 0.28rem 0.6rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .status-btn[data-val="todo"][aria-pressed="true"] {
+      background: #ffffff;
+      color: #334155;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .status-btn[data-val="review"][aria-pressed="true"] {
+      background: #f59e0b;
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(245, 158, 11, 0.35);
+    }
+
+    .status-btn[data-val="done"][aria-pressed="true"] {
+      background: #16a34a;
+      color: #ffffff;
+      box-shadow: 0 2px 5px rgba(22, 163, 74, 0.35);
+    }
+
+    /* Content Blocks Inside Card */
+    .info-block {
+      border-radius: var(--radius-md);
+      padding: 0.7rem 0.85rem;
+      font-size: 0.88rem;
+      white-space: pre-line;
+    }
+
+    .info-block-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .block-content {
+      background: #f8fafc;
+      border-left: 3px solid #3b82f6;
+      color: #1e293b;
+    }
+
+    .block-content .info-block-label {
+      color: #1d4ed8;
+    }
+
+    .block-mastery {
+      background: #fdf4ff;
+      border-left: 3px solid #c084fc;
+      color: #3b0764;
+    }
+
+    .block-mastery .info-block-label {
+      color: #7e22ce;
+    }
+
+    .block-advice {
+      background: #fff7ed;
+      border-left: 3px solid #fb923c;
+      color: #431407;
+    }
+
+    .block-advice .info-block-label {
+      color: #c2410c;
+    }
+
+    /* Direct Hyperlinks (Converted from QR Codes) */
+    .qr-links-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .alo7-link-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+      color: #ffffff;
+      padding: 0.65rem 0.95rem;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .alo7-link-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.32);
+    }
+
+    /* Interactive Tools Row (Flashcards, Counter, Timer, Reference Diagram) */
+    .interactive-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      padding-top: 0.25rem;
+    }
+
+    .tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.38rem 0.72rem;
+      border-radius: var(--radius-md);
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tool-btn.flashcard-trigger {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+    }
+
+    .tool-btn.counter-trigger {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .tool-btn.timer-trigger {
+      background: #fff1f2;
+      border-color: #fecdd3;
+      color: #9f1239;
+    }
+
+    .tool-btn.coin-trigger {
+      background: #fef9c3;
+      border-color: #fde047;
+      color: #854d0e;
+    }
+
+    .tool-btn.coin-trigger[data-earned="true"] {
+      background: #eab308;
+      color: #ffffff;
+      border-color: #ca8a04;
+    }
+
+    /* Reference Diagram Figure */
+    .diagram-figure {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+    }
+
+    .diagram-figure img {
+      border-radius: 6px;
+      object-fit: contain;
+      max-height: 64px;
+      width: auto;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+    }
+
+    .diagram-figure figcaption {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    /* Parent Note & Meta Footer */
+    .card-footer-meta {
+      margin-top: auto;
+      padding-top: 0.55rem;
+      border-top: 1px dashed var(--border-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .note-input-row {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .note-input {
+      flex: 1;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.8rem;
+      background: #f8fafc;
+      color: var(--text-main);
+    }
+
+    .stamp-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    /* Flashcard Modal Stage */
+    .flashcard-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+
+    .flashcard-box {
+      width: 100%;
+      min-height: 230px;
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      border: 3px solid #fbbf24;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.75rem;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 800;
+      color: #0f172a;
+      box-shadow: var(--shadow-md);
+      user-select: none;
+      cursor: pointer;
+    }
+
+    .flashcard-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    /* Stopwatch Modal */
+    .timer-display {
+      font-size: 3.5rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #0f172a;
+      text-align: center;
+      margin: 1rem 0;
+    }
+
+    /* Form Elements inside Modals */
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .form-field label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .primary-btn {
+      background: var(--brand-primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .site-footer {
+      max-width: 1180px;
+      margin: 2.5rem auto 0;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-soft);
+    }
+
+    @media (max-width: 720px) {
+      .progress-dashboard {
+        grid-template-columns: 1fr;
+      }
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .week-selector-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .week-select {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-row">
+        <div class="brand-title-group">
+          <div class="brand-avatar" aria-hidden="true">🦁</div>
+          <div>
+            <h1>大福的学习闯关</h1>
+            <p class="brand-subtitle">优尔幼儿园于洪校区 · 亲子复习跟踪工作台（2026年8月-11月）</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" id="btn-cloud-sync" class="sync-badge" data-sync-state="synced">
+            <span id="sync-status-dot" aria-hidden="true">☁️</span>
+            <span id="sync-status-text">云端已同步</span>
+          </button>
+          <button type="button" id="btn-open-sheet" class="pill-btn">📄 查看本周反馈原表</button>
+          <button type="button" id="btn-add-item" class="pill-btn">➕ 录入新反馈</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="control-bar" aria-label="视图与周次切换">
+    <div class="view-switcher-row">
+      <div class="mode-tabs" role="tablist" aria-label="视图模式">
+        <button type="button" role="tab" class="mode-tab" id="tab-week-view" data-view="week" aria-selected="true">📅 按周闯关视图</button>
+        <button type="button" role="tab" class="mode-tab" id="tab-subject-view" data-view="subject" aria-selected="false">📚 按科目专项纵览</button>
+      </div>
+      <div class="week-selector-group" id="week-nav-controls">
+        <button type="button" id="btn-prev-week" class="nav-step-btn" aria-label="上一周">◀ 上一周</button>
+        <label for="week-select" class="sr-only" hidden>选择教学周次</label>
+        <select id="week-select" class="week-select" aria-label="选择教学周次"></select>
+        <button type="button" id="btn-next-week" class="nav-step-btn" aria-label="下一周">下一周 ▶</button>
+      </div>
+    </div>
+
+    <section class="progress-dashboard" aria-label="当前复习进度统计">
+      <div class="progress-bar-wrap">
+        <div class="progress-title-line">
+          <h2 id="current-view-heading">2026年11月第3周（最新周）</h2>
+          <span class="progress-stats-text" id="progress-ratio-text">已掌握 0 / 16 项 (0%)</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-labelledby="current-view-heading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="main-progressbar">
+          <div class="progress-fill" id="main-progress-fill"></div>
+        </div>
+        <div class="aids-summary-bar" id="week-aids-bar"></div>
+      </div>
+      <div class="quick-badges">
+        <div class="stat-pill">
+          <span class="stat-pill-num" id="stat-done-count">0</span>
+          <span class="stat-pill-label">⭐ 已掌握</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-pill-num" id="stat-review-count">0</span>
+          <span class="stat-pill-label">🌱 需巩固</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-pill-num" id="stat-coins-count">0</span>
+          <span class="stat-pill-label">🏅 优尔币</span>
+        </div>
+      </div>
+    </section>
+
+    <search class="filter-search-bar">
+      <div class="filter-pills" role="group" aria-label="按掌握状态或专项筛选">
+        <button type="button" class="filter-btn" data-filter="all" aria-pressed="true">全部项目</button>
+        <button type="button" class="filter-btn" data-filter="todo" aria-pressed="false">⏳ 待复习</button>
+        <button type="button" class="filter-btn" data-filter="review" aria-pressed="false">🌱 需巩固(薄弱项)</button>
+        <button type="button" class="filter-btn" data-filter="done" aria-pressed="false">⭐ 已掌握</button>
+        <button type="button" class="filter-btn" data-filter="has-aids" aria-pressed="false">🧩 需准备教具</button>
+        <button type="button" class="filter-btn" data-filter="has-video" aria-pressed="false">🎬 含英语跟读链接</button>
+      </div>
+      <div class="search-input-wrap">
+        <input type="search" id="keyword-search" class="search-input" placeholder="搜索古诗、生字、魔方公式、英语单词..." aria-label="搜索学习内容">
+      </div>
+    </search>
+  </nav>
+
+  <main class="main-container" id="workbench-main"></main>
+
+  <footer class="site-footer">
+    <p>🦁 大福的学习闯关 · 优尔幼儿园于洪校区（2026年8月-11月全量教学反馈） · 支持爸爸 iPad 与妈妈手机免登录云端实时同步</p>
+  </footer>
+
+  <!-- 1. 互动大字闪卡 Dialog -->
+  <dialog id="dialog-flashcard" closedby="any" aria-labelledby="flashcard-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-header">
+        <h2 id="flashcard-dialog-title">🎴 大福互动闪卡抽查</h2>
+        <button type="button" class="dialog-close-btn" data-close-dialog="dialog-flashcard">关闭</button>
+      </div>
+      <div class="dialog-body">
+        <div class="flashcard-stage">
+          <p id="flashcard-progress" style="font-weight:700;color:var(--text-secondary);">第 1 / 5 张（点击卡片切换下一张）</p>
+          <div id="flashcard-box" class="flashcard-box" tabindex="0" role="button" aria-label="闪卡内容，点击翻到下一张"></div>
+          <div class="flashcard-controls">
+            <button type="button" id="btn-fc-prev" class="pill-btn">⬅️ 上一张</button>
+            <button type="button" id="btn-fc-random" class="pill-btn">🔀 随机抽查</button>
+            <button type="button" id="btn-fc-next" class="primary-btn">下一张 ➡️</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 2. 魔方/速叠杯/华容道 秒表计时器 Dialog -->
+  <dialog id="dialog-timer" closedby="any" aria-labelledby="timer-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-header">
+        <h2 id="timer-dialog-title">⏱️ 大福挑战计时器</h2>
+        <button type="button" class="dialog-close-btn" data-close-dialog="dialog-timer">关闭</button>
+      </div>
+      <div class="dialog-body" style="text-align:center;">
+        <p id="timer-item-name" style="font-weight:700;color:var(--text-secondary);"></p>
+        <div class="timer-display" id="timer-readout">00:00.0</div>
+        <div style="display:flex;justify-content:center;gap:0.75rem;margin-bottom:1.1rem;">
+          <button type="button" id="btn-timer-toggle" class="primary-btn" style="min-width:130px;">▶️ 开始计时</button>
+          <button type="button" id="btn-timer-save" class="pill-btn">🏆 记录本次成绩</button>
+          <button type="button" id="btn-timer-reset" class="pill-btn">🔄 清零</button>
+        </div>
+        <p id="timer-best-record" style="font-size:0.9rem;font-weight:700;color:#15803d;"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 3. 原表截图 / 裁剪参考图放大预览 Dialog -->
+  <dialog id="dialog-image" closedby="any" aria-labelledby="image-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-header">
+        <h2 id="image-dialog-title">📷 教学参考图示</h2>
+        <button type="button" class="dialog-close-btn" data-close-dialog="dialog-image">关闭</button>
+      </div>
+      <div class="dialog-body" style="text-align:center;">
+        <img id="preview-img-el" src="" alt="教学反馈参考图" width="800" height="1000" style="max-width:100%;height:auto;border-radius:12px;border:1px solid var(--border-soft);">
+        <p id="preview-img-caption" style="margin-top:0.75rem;font-size:0.88rem;color:var(--text-secondary);font-weight:600;"></p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 4. 云端同步与备份设置 Dialog -->
+  <dialog id="dialog-cloud" closedby="any" aria-labelledby="cloud-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-header">
+        <h2 id="cloud-dialog-title">☁️ 家庭多端免登录云同步</h2>
+        <button type="button" class="dialog-close-btn" data-close-dialog="dialog-cloud">关闭</button>
+      </div>
+      <div class="dialog-body">
+        <div class="form-grid">
+          <div class="info-block block-content">
+            <div class="info-block-label">💡 妈妈手机 & 爸爸 iPad 同步说明</div>
+            双方打开同一个网址即可自动通过家庭同步暗号实时同步打卡进度、计数器与备注，无需注册或登录任何账号！
+          </div>
+          <div class="form-field">
+            <label for="input-room-key">家庭专属同步暗号（爸爸iPad与妈妈手机保持一致即可）：</label>
+            <div style="display:flex;gap:0.5rem;">
+              <input type="text" id="input-room-key" value="dafu-youer-2026-family" style="flex:1;">
+              <button type="button" id="btn-save-room" class="primary-btn">保存并立即同步</button>
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;padding-top:0.4rem;">
+            <button type="button" id="btn-force-pull" class="pill-btn">⬇️ 从云端拉取最新进度</button>
+            <button type="button" id="btn-force-push" class="pill-btn">⬆️ 立即推送到云端</button>
+            <button type="button" id="btn-export-json" class="pill-btn">💾 导出进度备份文件</button>
+            <label class="pill-btn" style="cursor:pointer;">
+              📂 导入进度备份
+              <input type="file" id="input-import-json" accept=".json" hidden>
+            </label>
+          </div>
+          <p id="cloud-log-msg" style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;"></p>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 5. 未来迭代：新增教学周/项目 Dialog -->
+  <dialog id="dialog-add" closedby="any" aria-labelledby="add-dialog-title">
+    <div class="dialog-shell">
+      <div class="dialog-header">
+        <h2 id="add-dialog-title">➕ 纳入新发布的幼儿园教学反馈</h2>
+        <button type="button" class="dialog-close-btn" data-close-dialog="dialog-add">关闭</button>
+      </div>
+      <div class="dialog-body">
+        <form id="form-add-item" class="form-grid">
+          <div class="info-block block-advice">
+            <div class="info-block-label">🚀 两种迭代升级方式</div>
+            1. <strong>最省心方式</strong>：把幼儿园新发的反馈表（PDF/图片/Excel）直接发给 AI 助手，自动提取全部文字与二维码超链接并升级工作台。<br>
+            2. <strong>页面快捷录入</strong>：您也可以在下方直接添加新周次或新复习项目，保存后自动同步到云端！
+          </div>
+          <div class="form-field">
+            <label for="add-week-title">所属周次名称（如：2026年11月第4周）：</label>
+            <input type="text" id="add-week-title" required placeholder="例如：2026年11月第4周">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <div class="form-field">
+              <label for="add-category">所属科目大类：</label>
+              <select id="add-category">
+                <option value="数理逻辑">数理逻辑</option>
+                <option value="语言素养">语言素养</option>
+                <option value="思维课程">思维课程</option>
+                <option value="英语">英语</option>
+                <option value="体能">体能</option>
+                <option value="国际象棋">国际象棋</option>
+                <option value="创意美术">创意美术</option>
+                <option value="自我管理">自我管理</option>
+                <option value="击剑">击剑</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="add-subject">具体项目名称：</label>
+              <input type="text" id="add-subject" required placeholder="例如：古诗 / 空间 / 英语">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="add-content">教学内容：</label>
+            <textarea id="add-content" rows="2" required placeholder="本周学习的具体内容..."></textarea>
+          </div>
+          <div class="form-field">
+            <label for="add-mastery">幼儿掌握情况：</label>
+            <textarea id="add-mastery" rows="2" placeholder="老师反馈的掌握情况..."></textarea>
+          </div>
+          <div class="form-field">
+            <label for="add-advice">家庭教育建议：</label>
+            <textarea id="add-advice" rows="2" placeholder="在家复习与亲子游戏建议..."></textarea>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+            <div class="form-field">
+              <label for="add-aids">需准备教具（逗号分隔，可选）：</label>
+              <input type="text" id="add-aids" placeholder="例如：三阶魔方, 扑克牌">
+            </div>
+            <div class="form-field">
+              <label for="add-link">教学视频直达链接（可选）：</label>
+              <input type="url" id="add-link" placeholder="https://...">
+            </div>
+          </div>
+          <button type="submit" class="primary-btn">✅ 保存并同步到云端</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Embedded Base64 Reference Diagrams
+    const INLINE_DIAGRAMS = {"grip_posture": "data:image/webp;base64,UklGRlAaAABXRUJQVlA4IEQaAACQZQCdASo7AYwAPm0wlUekIqIhptZbeIANiWU3VQQVtRub/WWdn2b6fCtfp7Hfpv3Gt3lU7HLB4Xfdfyj85fG37B9rvXT/s/DF1R5jfy37zfof7x+73xn/pv+N4T/FL/O+0n5Bfyj+df6L094EvS/tn6iPsr9n/4f+G/IX4evmf+96SfYf/oe4N/Mv6d/0fWfwCfwv/S9gT+h/47/x/5X2Xf+v/b/mZ71/q//3+4h+t//J/wnCsGDpeYoMk7ngEiobEHrqYuuPTttRZA1vaXI3HMYmyLwxWlazq2ub6beE4k/3Bb5Sv5BT9FEtfCDaFBXcVo59zKQ4JlRZv7G3b1kj4JPcMNRy1ammxO6nJ4HJDcM6eGlZKYent5wHLW1Wmorm1RH40RLi//Xcbi/PSLNxkylHvWSyr2DTLDKqGEHjm87P/pBCm8mBp6nMeIvZg6VKAuYYgmYKtFWIsJeVz23tn6Kdh3uOcUP7eCnD07kSiFJAbK6DDJnjTJ3z9cH73PykZ9ipkRUirljdEHE+wfsTAt44b/ValbVnPbIdi/DVv+IyxPschQ26QXIfmR4pS6P3W5QrPtz8rgWjk46v2NoUsvJW07uDWBebnkour1aq4G4BAtqFMc92zBLDupGXAnu+Dbx6OF8Mm/N2dfJ7Y7aHkwywxf1VduYofTM2ldmiX+brN7vjjqVVeCUtnib9aA22OVoK3DJgCfXon2TT+jZKm7YCKoQP3joIPLm/DWC3kQgSD1D5+LmrEsYKiSnZif78bAIzQc64Ni508doykSjKXky9QhnH/Ow+v+nBF1VlB9Hg5x6w+ag9YM1x4B57yLdGLUlEezNyJeTGyCPNLvqg+gyktTrZlzb33ykhb4Mqqia4trUT0X2fy+dZqoJ7ZeHpUXAM7YNzdihJ1PnayO+Dgcl2OxEvtsStJV0Ii+dJp6w8j5xtqw+pIKqj/kcsGt1GHOwOo5yvAajP3d7U2AAQDRVR7AheLX2RMisTOB3Ryhook+vbGHzLBZ4jDS4tDCPn91kaUQPVHT5FjLVJ4ZjElUmm7pU/Gll1dQDKDd0kUT+pH69IiQSBsxipMTpXQ9oP2haqAAD931OrHf2j+wLIR3V+5c30PYjlJ3CjwtrT6DpQf+YPYCVl2ERj+n/YrhXyP/xYdT+WeaH2Qb1eOcQy7g57f2cAprm6F7od7E/Sg0/RQU21Ek64SzBFF7ln7jkP4/ABB3wZaFzXaH3jTwYJhQkJyB1XxiskgxqUVDnBfHWoCmqhLiS3Rr/Vpp61oW9RHDTUMqPHgvfUq25xG8rAcIp+xMjltH8V5HSUsQSH4APY0sucKYKFMX/MNaJF2q/7WjKkSeOh3Q+Ku6l9hzNvEoUrL7PO/xMqj9fk45Zu+NQzyDkMcW2w6QrrkWBdzTV2z1eIIl3D9p6hPMpfsrDNElJiQZP4c50MzR0hWoJUDJasC33MEYtidzJdN2fqvuag4s/1fnu18USIVhYVw+U+UloNmSh1i3ZkTElXETdW4EaxTE3JqHH7RJWCqO/+MnFAYXgL6bQMcIE3HUNRrbK0Qk4ch8ZgTg9UmMpYvFFPJf6TyK/6H/4sdwQVP3/jvbUxAGTRRIaVnxmNpaUpMh75FkBzMtEPqLkZ52t4IdyyuMt/8jK+0AfnhLz+q4sXgiElYeZ09bl59btdJYlym+Otx6iytHGT0twuCI4tlNVq5gtrqZifVVsTfzCo8XWR2FxP9NgL8wdIaOQ1WjDZydHEKM4J1Sv58hrypLITHfqIQh+jKclGgoqiFIHKAYIaFZpfycbKGSyeL60a8T9ESDFvKYDKVmT/aXcb0ebGM6NF5686peX/qPc953lK9xD8mi+HQW6eAHs1644yOOoXic6dQyf4PuaHpl1VVE3YWmm2/c4u8FCPD68Hn+M8Rf2v+HwljMkffDrq50vkQ1P1Tyth0aA78mXH1fDUcZhfZWb1J/cli8ejLpSPwOdxyxg2dDl+MKR1n83W2v8Gc6YgA5V1cceo3nUIMfkt7dv2BZnMnicWLWRtRzodi448Of4q40it9TFGAhX8UKq1h2zwLbDjqpuVNCZAfkN+OXuYEMLYSRCdZouGRwmyLUoAFVNsU0rkOSE8f40rdanniPuOfyQT99F6IpD9/D5S0bOyB8i8aMskOpo/lKPiJrZz/KSnOKU5CesGfD/Gr5eTTZ2QEw3VCWRbjoh7rNWNuSVkud4PmocjW/IwF807UTSgrijU1r89QnviVJzlcUCnMONwQ2PuZ/L2c+hUC8SCry+eKnCpKMq9dHaY3JqVc0SfFgzvCBwE0luMQiIfHr9s4WbE/e349b0zXGpkqOzkAbDvCYA3aW2zKH7+01jjKYudYQF9+CR7fWp6hjGlnoPBtbAwV8h+RtQSr9j/sG2ork1jEJRkxg0Sp1S4g+VdYT4t8R8OfD1QCr2AbCvmSNsUtSwV9T/TM6t+8s2k+Dnq+hlvPK0OEnsE+RVX7SnUB4E4UXpq/c9qHlVRg/VXXBgyaBkoLJ9buBDVFS2vg3Z+yD9oUNl6XDqnbCkH34WBGN5thVykgXbucKmqv8wTH8TcRy+MJKN2WyUriX+Z2pjV1ijhzXC4MpLYB16aCHlhOfHwvrabVwleHT7oif/tSJ9gG1aFT9ozl+BEqqopx8PtS32kAObqvd+43Fdhta5RYslAHZlz+ZAhFDcIyc3Xn71R63/kdAsyyCVuP/zzvbcb1H/5qx2BYSgbUb8qAU9MJ+RZqGJo3hAjw2Mk7ldORqU7+I3yPhen8/1ry/V+kd3IvOxOQBJsgDAz7pzUD0XLOXpDfjRM0zDkcnHaGW3sv8u6H5YMGkya6Uqi6nUxKYMqA8fqUa6FVyP6AXBbsg9Zaq8pse9kU3/OV2aExCpAxe5vQc3FtKM0ld2685UciS9tre3O85LTfbOsQ1KbS9AqivktUaJCVJUW8raeoafeoa5xMxln5dokyu6gip873urG/q+A4sZdW/VUi9jGFyeLfv+DQGhJYHpSm98p2EfuUWwaNWcaBuKe/44kgqyXTNCN8L/dOI6Hq//iCeYmNAhXdNLa1NEbqFJqHK9QVIqBYFxcXsw37Jl/xKJy+7HDv8IjQOH8TSOcLss6rCTrVI1xhmYPD0dfk0P7pUrdkzkcp8X9Cw2rDdNUwnTlUkcEDu92Z0m1MT1ZItU4ctUbyzP+0Q78t0zQNadpyqNw4CD1HwsC6AgKgXc9LkyqgQsb84g66mlhsKHzjPHMB9dUc+mqj+74cVS8HVDQPY3/Epk8h8uP4YjNUZbBSr5apwfjy66hbUn6pCgFJrdNx6kJC4Wmak+fmNT/5VyQ5vVOH4MbliPF+HMSvwaTgxW5Ua+mm2qodsPDa1ysosZ4/BQrXSafykOuYoUfEBgH9RyLlUu4Kone2LmL9EHXvMwBoTajWPpeP9Nsly++Ql+SDXZgNCErugd6e/43w4d0TuqADjrb5uvzUxqH2Z+N8QztTd1FuZIAggs3eh1LtEFNlWJiNPEY5KFvwAAAzRSuhwHK80C4XOsqH6e6IP8C+5by1EEl6OhHNdJX9TVxMWX5BmJ5e+6ffxbbiveZ2KGPFXyMA0ew7ZHDQhoRpNj8lpQ4N2YhzmDB/4V7gJs26fiscFzF71bgxlqSxMROQvPdrou9LLY+nepQHD+dZo4K+KCuxMPK3prK+43PA4Ym2SVzAXxKDCB8Btb2WHx0a0m+dEX7OWYv/4ehdg+ZdlyI18lMARfcKFHHWZOM/pk5NgkITLxg14Nzu4kNAtXOmOOnQzQFIHM9TkbhNjTYpggMXUrF07Fv9F1XSd5C6drFrP1Xn+sP1yBItQBQq5VIH5z/E5zUu6YPw6dJTI5jO/SpNamVm78BVOzpFQ1p81HbRN8h/GoZtx2m7NB0jgNZHm+XpIe7yCuhniJ6zLPUMU/dDIS/96a4YSRyAdezaQhtubF4EOCxFz1hx+BsEAmcycJ01438S3HUmkJhb3RHBBPIkVu2CCfMs5TiQSBk+cD3acPViXVSmYrPtiB2N5ULhQ4Saa5yisd2vY6UM/mYXXZiLyijeMvExyDvoPxiCciNe6ppx1v9aO7e0F/JRYaMInE1lCU+iDgx0ten34siaP4pIKwZBqJySQMAF8NpX7uUm91i2qQ1fljB9+HYj7e88MmcnFS/zSdDuBR0w4N4jKOIltuVj5vYgJ9x1YKSX0tQUV3OkvukBnL+sz5e/0NuAAu7SIVe8a2WeaBtwUZKysSfoPNXAJJKUMH3zkxCGepV+iDrAugHp5W/Hv+Q61/yxk2WXkZu7VzfgIvYd+FnF69rk4mh29oc4BKGrcIFio4JBKVHj7UZlNpJHqyLa6FztV/zM23Ui1bqyA9Bs5b+b6EDBljePCR6JEjjSBJn+TxVNqHUtPZKE8YZDf6bi3ZHSdEyikID5KWt3Q3kBOMTGp0XIM5n6Jm+RGXBm4EAHOjbIsEPhqrhk/mCiIFqgVDUlwZB7fd9VR7ZltO5/kKC1g/3yNoy70Rpx95rB/avhsv+Dq2/yqpbF9Yj7mJvJdybn2GPkuSRNTBsUVAUi3QhKRv08i8UF1s4yb6q6I7ZrWv4beHqPqalMVDs1mWWLuLFhD2gJZNOil5fLTZr4ewhO8dR/7JqO9w2nD2Y2f0oM198bap6RZ5uaG/nPkt/owuXNqWTDVSyu7Ls/WBCj0ud6h90iQXTktuI6bnVWWiRRia92739IxUC6xxK1oVJ00RfsmE0AkAc0xbWXhL29AMBATGljf/keDxtZ/DNW+Wt8IXpwI8YUC1jpf/ovwPWXHOoYPJ5CYSDWFTCY3jXhtA7PrBgmM9NSE0yYRkFM4ch+lCfY617b9V917Tcm2y+JgJGo0qWhthHlltZQA8owUdnEOsTMTU6KLYYQBcgv5ASVf+ZBeRNKaS5gYUFABFKcpamRUsZw+vhWhrq4D195bAvGJKjTDniW2oupVlqqa9FgTszlWbK7r8er9lTqql9GVqqDijJqhxmldIRIjlBUltfEKOiZakkeO+5KcEK5QpGUvxYYNzjYAs0TxA2uvTU6iljyP1MVt5Du3/R2fyWADLgmIzu8nCg9ap8XAIzNdSVSWZKm1nCA6Wj6Wbpv0osedxdaKrDFPtJmZJll1wjXWPqKWFOINH/qPKC2owvR12ebK/50F1Do9ts/7F3ngcia7edK+ooUc/JIbA8Skr4aJ+LjYeaR4LVGlxP+M+1N/3Nv875yhAQTzbg5Z0x0m/RRlN2/30FkSTjUYgobKu/iHOoAoYB/QkVCNBxoy3A/LwnzHHUqRjMV2xmFU+KjJ6P0YjU2O94quLLww1HMaB+zoPrc5lrrQKXI0ddU2s+2NQgVzKXxdFEUKJZ2C9XBjls38JxGPzFZodtl1wy4gs9guyHffqoO15RkiISlZhOkMF5y2C4DWpUKT9m6vW0+5FgIhg1OMGf/hkuWYy43esiBGIX0AlNOzpI7mGJLXmvg+wWYK6OXKYyO4GT7WQYAyV0q37zF4rlGJ6LY6YVRA3N+WgXuKi+DSaf0epB2VNrs6UMJ2j1NYvysrIiLi8f08hNhmckPDusKwlrrdBS12CCLAZsNTe7HKdO7nC+6xDTjdBrM1qvFw1trAzm7q/3eQlrG735RHOPvzfPeowsnaoHT28yJu5OHIkCa7Muv6tmIcfV4Y2kP+7ELFDJpWJVgRkddGay+OW+DMgsHKhmuBSaDcwkA6gu3rI/5q1TUCIquxwkJr9bm68x2GvDF34/3rvadZ3iD4xyREAWzhdcQTyZjq8u1tzAmpYCMAcgRlxER4VIf7gklQ4tAKvfxB8l7+0p2EOJsRP+UtX9C1jVIj4MvQTDY//kxe1VaoYT+LK+6jdoKkYqLOdk3g2Q1Qp25Y/AbIcsiQUvM3mJlQ6pWOK4RgR1c3Xiy4MVqix95oku93NdnXupI93+yGDML1AZQ/H82k3pJFMtYshjXpm+3AzkRmZR1B2gMpRIdx47Q/5fvNazR8HHLAVFfbX8vzb4ajs7ixKJVKvOWy6S34qkgUUnsXvvP3cukDhiagyOiz/UdheAvVBmPHy+YOpvT9mXefyJTUrHbMCUhN6nNxNSrOH4sM7s5pdtU4GnbAUMxZF7/fL71dDDZ9LdmJTTu8KPsPEtgCilkEVHrPTzk89WyANQylYSQ2TuZ5t96iX44wOjHOG9MgXZGoguE0zZcRqMFv7P5wInbROB5cA/Ea/BjiaOtKYIsiYKTrhjDngbMs+GUi4AC64pX+YN5z68XXvWO0KmLzFV8H8NIgCFwz4BHGZwxKeIATYXGga347JyXM14jqkArdsPycxyY8+xwgf9z/z5Y9SjaoqAQfh12gTV1yjqVlgj17AGng2T7w/DV06BkOYE293fGU+MKFlNywy8ug1HLqdwVMvUaiF2Yl6s/utY57VwgDFNImJxgK2MtopdvFucYyX9lK2KtTp7BjtuTS4JxPA6rh223E1LtxO1Wygk1lXIL/Sz9nnh/0vFG+Ps/SQcWiD3uZKMPsSZdzYE0rjKi06sp+gd8Q/xFlO8RB0uEAQWT33qGBTp0/rv+YTv4QcDvmUjMkfvtvnh1wavbM0A97IREqsOX8ujJ9Rdpaw23bakkg5KWSYf8uLlfRLTfPGU64q7H7IdwDNPANlUesbop5Ks6iy0Jd7funbDfUR2s+T0JcQBcO2E2ax+3p8OcuTcwvhvH5BBFtP2jwH/fgPiOCYFWM4nVlqJDWqHlMtGj49meMcxTTkviQDSO0cGe+6aiscw2Q8/49+pMKn/9p4FbHBQPvCdb3Ylri4ux/x1iE4rCAmDAX0o9bln0FcpYvhr9+a5U0jh922gFRzpwMWc/W4FE0hGPheRCFLzBNHPEDiP2N96y1KuhgUfQjRyVLb3bNFzds44GgRN8iq3lp4cjAMNIZf0NkxAc9BIZVjHFdRSdBi98ISpyWeT1njuNiPQf97fzW3Y++n39OZ2DMZ20n+elzF1AbLVXpNgIUu/BesbcEuUTjSOgAEt7bzlaReTkaoP0L1NFAViqr7KoUtXcKVi31P7QCkX5bSGvK7hM3mv+NIc1OsvqAa2DurnP6PsrId3i517mLGyf1XpskFJZERtKaQulgD5ma81xu+u/pDfE/jAvzigYh+sEMdyJkPjGADy0/ZC25MwxfqeziafQiaxjLG2KKrr3tU23sv9Z4bIsAQq7F/7xSqmPHfIgXFXmBSkpE3wbIIBjEa2SNFrrrJ40qEfj33M+nUBkKispf85sofr7NKSo/YoBTkJZXkluFy2WmxUP0AIUwyqF/3/4lH79VBxNp/pxPwMAFZnsJQf/zxSbZyAFTwYLZjx5TJoTBm5kOqosYnP6f9/pWALsvlKAGX9V4mtPekJbuF/efk29hmV6KdllSVp1Y5Sbl877cThRWAyQYaIkCx6190F1CYledRDE+mOpCuwEsaV0cMsrTP6hoarlOG7NYxkjhmfGwHxxCfUmMW9FQ/oTXjgti0SfVDfSsQC3DiKY2sfOl7GLggAH1oOvOtXNKnGNj8hAhilg5x89DrHWJz5gsHEZgU52MQkeN186slQHWEd012ZBwwgGpM0tP0e4kI7wOiqOFDX7mvnTPQvYpqlHZPsMFzlbg0wyrQmZh33/Htf9mXMcvAbqfKgcu/dO9VHXzBeC9v6AcNV0HDNk3/gELaa2vE1rLxyvAc4seon6q22IT5czAUjhQC/lUjF9YrrG0sU1kZhWGjf//ghZ6+zBJTKXGPVajejiUaTnZe2GP/Zo8uiqx0lhK1eqzxjO9em5uwoxo0UfULlgvoCXH3KBGjjkrLl/ETHP73WvQKY6lSkcDVRuh/Ik4toinubRIzNZSqoOfqRYKI93fgrETBMnArnJ5rlpfKCZqPp0VHFyWjEdxs6TgxYSytUegbZGmGWmPH2Mieuz9Kcg7tUqD6O9ku7zqtg8DKe3JBOCZji1ix6pGTn1P9CNqQPf4z36KvShvdmmKqh+kEJ5ICE1leyWaSHXmtgh0wtKZ7s9HbxplivJTYoB9mEXVwbpbpnLYLogRvRPvg0saaque5M2c+uBpgG0bCzg+8jUeot1G/AQoGf/UeVIY61HoDUxJp1ZWyadegl+QHeOzTEV5KCrrLZQrdFGJLi7W0zJjhDtdDNSteqsdfhkd/TKMgwNYPO2ZLDe+RjoFQfliRU6l1Sm7RdZIFC9ReN8oYORwt8iVNu0dfbQSjcS4tyCDM0qB093MqbW3ItdD7/3q8LYK0ylwXWXip/HjUMNrpwTP2O6J7Ny13G/phlgR/Tz+p0N1FKuG+7rReWLiuHKkgXL0TXFJs2SAOG3cEle/ebPIwH0tyK0z5Z63uJWN+5QMHdpN1U5EFF72v7vug4eM8IIo4fXCadUJ9JQzESXnY3qRmhCaARGEuptMwIn6NVcVHgkKl1YwllpYGFzYaOLar16LQATS1aF2iqKO9lYIkmuOXFAJESxt1Rv4NCdhhgfNw52s9cMFpK3QeeAugdfCbeDdJk48BYGGUwBq/GVekpqdqOA86KeILHfRvFdun/9Rh0coReWFcuPfWzuQH2WRr9p5uu6c+xMYYAIvpMfNW+5vRhq28p5XPizGwm4KMxWFe21lKbKhYiOW0e03RHk4I+YU7CN6XYwEGry0Alz01MmtaINraZ8e1eQtowgJGTMLzJz8SLtISQ0P98VpqskejbOyFGOAe1i6FGaU8+I1WUEn5R6ZyJFpBcnMiF4gVqM5UbnPJdGnCEg+zDKYR5SfkTGzghdOGWUnBGurgYQZkrTcM67kyeEgrkxRJI+g8Svql3Chf6TC3KojPMkWwknjD+SwzfKN0oeduJZFaa4fXe8g01PF/3ftGnWME904CALRZ47ImD3SCcD9eDm72VvSjWfLolRVESbT9Uv3C7c6p16HNmG9jSawrzTbwTn4thzRzdlGm220D0MBVtdribfs49siYeW0jTJ4LSd+8AQOpuIAAA", "magic_ruler_1": "data:image/webp;base64,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", "magic_ruler_2": "data:image/webp;base64,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", "chess_drill": "data:image/webp;base64,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", "tangram_7_a": "data:image/webp;base64,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", "tangram_7_b": "data:image/webp;base64,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", "tangram_4": "data:image/webp;base64,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", "tangram_5": "data:image/webp;base64,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"};
+    // Embedded 16-Week Curriculum Dataset (2026-08-w1 to 2026-11-w3)
+    const BUILTIN_WEEKS = [{"weekId": "2026-08-w1", "title": "2026年8月第1周", "month": "8月", "isReviewWeek": false, "pdfPage": 1, "items": [{"id": "2026-08-w1-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "正确书写数字1-8", "mastery": "大部分幼儿能正确书写，但需加强数字“8”的规范书写。", "advice": "请关注幼儿正确书写情况。\n坐姿要求：头正 身直 臂开 足平\n书写要求：数字书写时请仔细检查细节：笔顺、占格、数字8不封口。", "aids": ["田字格/日字格本", "铅笔"], "flashcards": ["1", "2", "3", "4", "5", "6", "7", "8"]}, {"id": "2026-08-w1-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《疯狂大请客》\n①当牌面出现“数量和为5”的食物牌时，能够拍铃。\n②能够按照顺时针方向（从左到右）正确出牌及收牌。", "mastery": "幼儿全部掌握。\n大部分能够目测，个别需要点数。\n25%的幼儿需要在教师提示下完成顺时针出牌，表现为不分左右或不能将“从左到右”与“顺时针”这个词匹配，后续练习仍需关注。", "advice": "1.利用生活中的物品帮助幼儿练习目数1-5。在家庭中可以拿出扑克牌进行数字大小游戏，例如：“顺时针方向依次出牌，数量相加为5，即可抢牌。”\n2.协助幼儿认识方向“左、右”，例如：在你的左边还是右边？你的右手边有什么？从而协助孩子更好理解顺时针方向。", "aids": ["扑克牌", "《疯狂大请客》卡牌/按铃"]}, {"id": "2026-08-w1-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《悯农》", "mastery": "大部分幼儿能够背诵古诗，理解古诗字面的意思，并能用自己的话简单描述每句诗描绘的画面。", "advice": "在家的时候可以创编古诗的手势舞，和爸爸妈妈说一说古诗表达了什么，增强古诗的理解。", "aids": [], "flashcards": ["《悯农》 唐·李绅", "锄禾日当午，", "汗滴禾下土。", "谁知盘中餐，", "粒粒皆辛苦。"]}, {"id": "2026-08-w1-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "a o e以及a o e四个声调的认读和书写。", "mastery": "大部分幼儿可以正确发音，对单韵母的书写可以掌握笔顺方法，但书写拼音时占格规范性仍需继续加强。", "advice": "游戏化练习，玩“发音接龙”，家长说“a”，孩子接“a”并组词（如“阿姨”好“啊”）；或“口型猜韵母”，家长做口型（不发声），孩子猜是哪个单韵母，提升兴趣。", "aids": ["拼音卡(a/o/e)", "四线三格本"], "flashcards": ["a", "ā", "á", "ǎ", "à", "o", "ō", "ó", "ǒ", "ò", "e", "ē", "é", "ě", "è"]}, {"id": "2026-08-w1-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“短横”，书写生字“二、天、土”", "mastery": "幼儿可以掌握书写方法，但坐姿和握笔姿势需要关注提高，写字时需要关注笔画在田字格中的占格位置。", "advice": "请关注幼儿坐姿和握笔情况。\n标准：正确“握笔八法”（一寸、一拳、一尺）。", "aids": ["田字格本", "铅笔"], "flashcards": ["短横 (一)", "二", "天", "土"], "diagram": {"key": "grip_posture", "width": 315, "height": 140, "caption": "正确坐姿与“握笔八法”标准图示"}}, {"id": "2026-08-w1-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《象迪找找看》", "mastery": "课堂互动体验良好。", "advice": "在家可结合日常物品引导孩子观察细节与分类。", "aids": ["《象迪找找看》教具"]}, {"id": "2026-08-w1-think-comp", "category": "思维课程", "subject": "综合", "content": "学习魔尺，拼锤子，手枪", "mastery": "大部分宝贝已经能够独立完成", "advice": "宝贝刚刚接触魔尺，家里有魔尺可以课后多多尝试。没有魔尺也没关系，园内会留出充足时间带领孩子们练习，慢慢感受思维游戏的快乐。", "aids": ["24段魔尺"], "widgets": {"timer": true}, "diagram": {"key": "magic_ruler_1", "width": 164, "height": 118, "caption": "24段魔尺造型参考（锤子/手枪/爱心/小鱼/螃蟹）"}}, {"id": "2026-08-w1-think-space", "category": "思维课程", "subject": "空间", "content": "1.认识金字塔魔方。\n2.学习金字塔魔方转动方法。\n3.完成金字塔魔方第一步还原黄色。小风扇及黄色面还原。", "mastery": "幼儿已熟练掌握魔方底层第一步还原与黄色面复原手法，基础还原逻辑基本吃透，仍需持续巩固练习提升熟练度。", "advice": "学习魔方是一段漫长的过程，需要孩子们有恒心有毅力，需要家长本周开始每天鼓励孩子，上课认真听讲，做事情时请先观察再动手尝试！一次学不会没有关系，一定要有耐心坚持学习，一定能够学会的。", "aids": ["金字塔魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "金字塔魔方练习"}, "timer": true}}, {"id": "2026-08-w1-english", "category": "英语", "subject": "英语", "content": "单词：Chinese, name, ask, question, speak\n自我介绍：Hello everyone, I'm XX (名字).\n句子：What's your name?\n英文律动：《follow me》", "mastery": "大部分幼儿能够掌握", "advice": "和父母练习互相用英语问名字（已为您关联8月复习周汇总的本课爱乐奇跟读直达链接）。", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：Chinese / name / ask", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKajiQTHiM5iR5Lvng8X8fOPRiYhvV7s0NKFRwVQKDzpZL%2BB3pJot58SZBUZjKH8r05zrd488YyuHaGJL0RxeGf9"}], "flashcards": ["Chinese", "name", "ask", "question", "speak", "What's your name?", "Hello everyone, I'm Dafu."]}, {"id": "2026-08-w1-pe", "category": "体能", "subject": "体能", "content": "1、热身运动\n2、律动舞蹈\n3、室外游戏\n4、拍球", "mastery": "1.小朋友了解了单手拍球要领\n2. 95%的小朋友能够连续拍球20个。下周继续练习。", "advice": "建议家长休息时可以带领幼儿进行拍球练习。", "aids": ["篮球/拍球"], "widgets": {"counter": {"target": 20, "unit": "个", "label": "连续单手拍球达标"}}}, {"id": "2026-08-w1-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习车的走法及吃子。走棋格数不限，但是不能拐弯。", "mastery": "幼儿可以掌握棋子名称，以及摆棋。", "advice": "家中准备国际象棋，引导孩子摆棋。", "aids": ["国际象棋"]}, {"id": "2026-08-w1-self", "category": "自我管理", "subject": "自我管理", "content": "饮食卫生", "mastery": "幼儿全部掌握", "advice": "1.饭前便后认真洗手，不用手抓食物\n2.不挑食，细嚼慢咽，少吃零食冷饮\n3.瓜果洗净再吃，不吃变质食物，吃饭不打闹", "aids": []}]}, {"weekId": "2026-08-w2", "title": "2026年8月第2周", "month": "8月", "isReviewWeek": false, "pdfPage": 2, "items": [{"id": "2026-08-w2-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "正确书写数字9-10。\n10以内的相邻数。\n10以内的单双数。\n认识数字0，生活中0的应用。", "mastery": "幼儿全部掌握。", "advice": "可以在家进行数字互动小游戏，用扑克牌代替，大朋友从1-10中随意拿出一个数字，幼儿快速找到它的相邻数即为胜利。", "aids": ["扑克牌", "田字格/日字格本"], "flashcards": ["9", "10", "0", "单数：1 3 5 7 9", "双数：2 4 6 8 10"]}, {"id": "2026-08-w2-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《疯狂大请客》\n①复习之前学习的游戏规则。\n②当出现两张一样的牌可以拍铃。\n③当拍错铃时，将自己的弃牌堆放在铃的下面，由左边的小朋友继续出牌。\n④再次拍对铃时，只能拿走自己面前的牌和铃下面的牌。\n⑤其它小朋友拍对铃时将桌面上的所有牌包括铃下面的牌拿走。", "mastery": "幼儿全部掌握。\n个别小朋友不能正确翻牌。", "advice": "利用生活中的物品帮助幼儿练习目数1-5。在家庭中可以拿出扑克牌进行数字大小游戏，例如：“顺时针方向依次出牌，数量相加为5，即可抢牌。或者出现两张一样的牌，也可抢牌。”", "aids": ["扑克牌", "《疯狂大请客》卡牌/按铃"]}, {"id": "2026-08-w2-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《画》", "mastery": "大部分幼儿能够熟练诵读、背诵古诗，基本理解诗句字面意思，并可运用自己的话语简述每句诗句的含义。", "advice": "在家里可以玩古诗接龙小游戏，家长说上一句，孩子接下一句；也可以孩子开头，家长来接。锻炼记忆反应，不用追求速度，答对多多鼓励，增加成就感。", "aids": [], "flashcards": ["《画》", "远看山有色，", "近听水无声。", "春去花还在，", "人来鸟不惊。"]}, {"id": "2026-08-w2-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "i u ü以及i u ü四个声调的认读和书写。", "mastery": "大部分幼儿拼音发音正确，基本掌握四声调辨识。但单韵母书写的笔顺逻辑、四线格占格规范性仍有待强化，需持续练习巩固。", "advice": "家长准备拼音卡片，把i、u、ü卡片摆桌子上，可以玩抢卡片：读完快速伸手拍到对应的单韵母。\n重点区分：i头上有小点，u像小杯子，ü有两个小眼睛。", "aids": ["拼音卡片(i/u/ü)", "四线三格本"], "flashcards": ["i", "ī í ǐ ì", "u", "ū úǔ ù", "ü", "ǖ ǘ ǚ ǜ"]}, {"id": "2026-08-w2-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“长横”，书写生字“三、上、耳”", "mastery": "幼儿可以掌握书写方法，但坐姿和握笔姿势需要关注提高，写字时需要关注书写笔画以及汉字在田字格中的占格位置。", "advice": "请关注幼儿坐姿和握笔情况。\n标准：正确“握笔八法”。", "aids": ["田字格本", "铅笔"], "flashcards": ["长横 (一)", "三", "上", "耳"], "diagram": {"key": "grip_posture", "width": 315, "height": 140, "caption": "正确坐姿与“握笔八法”标准图示"}}, {"id": "2026-08-w2-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《象迪找找看》", "mastery": "课堂掌握良好。", "advice": "结合图形规律在家做观察找茬小互动。", "aids": ["《象迪找找看》教具"]}, {"id": "2026-08-w2-think-comp", "category": "思维课程", "subject": "综合", "content": "学习魔尺，拼锤子，手枪，爱心、小鱼、螃蟹。", "mastery": "大部分宝贝已经能够独立完成", "advice": "建议为孩子准备24段魔尺在家里可以尝试完成学过的图形。下周在学校也会带幼儿继续练习争取熟练掌握。", "aids": ["24段魔尺"], "widgets": {"timer": true}, "diagram": {"key": "magic_ruler_1", "width": 164, "height": 118, "caption": "24段魔尺造型参考（锤子/手枪/爱心/小鱼/螃蟹）"}}, {"id": "2026-08-w2-think-space", "category": "思维课程", "subject": "空间", "content": "1.还原金字塔魔方黄色面。\n2.方法迁移还原魔方蓝色面。\n3.通过颜色叠拼还原整体魔方。", "mastery": "幼儿已经基本掌握了魔方的还原方法，并且能够举一反三，独立完成整个魔方的还原。接下来，需要通过持续的练习来进一步提升还原的速度和熟练度。", "advice": "家中有魔方的小朋友，尝试独立完成魔方还原，巩固课堂上学到的知识；暂时没有魔方的小朋友，也可以回忆、分享和魔方魔方课堂有关的趣味小故事，讲讲自己玩魔方时的感受与发现。通过这样的方式，调动孩子的积极性，进一步加深理解，培养对魔方的学习兴趣。", "aids": ["金字塔魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "金字塔魔方整颗还原"}, "timer": true}}, {"id": "2026-08-w2-english", "category": "英语", "subject": "英语", "content": "单词：bag, eraser, marker, pen, ruler\n自我介绍：Hello everyone, I'm XX (名字). I'm a girl/boy.\n句子：What's this? It's a bag.\n英文律动：《follow me》", "mastery": "大部分幼儿能准确指读单词", "advice": "练习句式：What's this? It's a......（已为您关联8月复习周汇总的本课爱乐奇跟读直达链接）", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：bag / eraser / marker / pen / ruler", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKYx6KtvDxMR63CykXV%2Fe0%2Fkz1xyQ21p2jmafTqqo288Gx91c5u1kD7S1ze%2FX1YfdcFc4MhUMf4vYaUbznGWLkvK"}], "flashcards": ["bag", "eraser", "marker", "pen", "ruler", "What's this? It's a bag.", "I'm a boy."]}, {"id": "2026-08-w2-pe", "category": "体能", "subject": "体能", "content": "1.《小猴子爬树》\n2.《铁锁链桥》\n3.《一飞冲天》", "mastery": "课堂体能活动顺利完成。", "advice": "家长在家可以多开展户外跑跳游戏，锻炼肢体力量与平衡能力，鼓励幼儿大胆挑战，提升耐力与意志品质。", "aids": []}, {"id": "2026-08-w2-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习棋子，棋盘，以及摆棋", "mastery": "幼儿可以掌握棋子名称，以及摆棋。", "advice": "家中准备国际象棋，引导孩子摆棋。", "aids": ["国际象棋"]}, {"id": "2026-08-w2-self", "category": "自我管理", "subject": "自我管理", "content": "用眼卫生", "mastery": "幼儿全部掌握", "advice": "1. 通过故事和视频让幼儿认识眼睛的重要作用和保护眼睛的方法。\n2. 懂得爱护眼睛，培养幼儿良好的用眼卫生习惯。", "aids": []}]}, {"weekId": "2026-08-w3", "title": "2026年8月第3周", "month": "8月", "isReviewWeek": false, "pdfPage": 3, "items": [{"id": "2026-08-w3-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "5的分解，组合\n5的加法\n5的减法", "mastery": "幼儿可以全部完成。", "advice": "可以让幼儿在家根据家中人员的数量进行食物和物品的分发。\n例如准备吃午饭，可以让孩子帮助分发碗筷。", "aids": [], "flashcards": ["5 = 1 + 4", "5 = 2 + 3", "5 = 3 + 2", "5 = 4 + 1", "5 - 1 = 4", "5 - 2 = 3"]}, {"id": "2026-08-w3-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《疯狂大请客》\n①复习之前学习的游戏规则。\n②当出现小猪猪的时候，直接拍铃。", "mastery": "幼儿全部掌握。\n一名小朋友不能正确翻牌。", "advice": "利用生活中的物品帮助幼儿练习目数1-5。在家庭中可以拿出扑克牌进行数字大小游戏，一包纸巾代替铃铛。例如：“顺时针方向依次出牌，数量相加为5，即可抢牌。或者出现两张一样的牌，也可抢牌。用扑克牌中的大小王来代替小猪牌的角色，当出现大小王的时候直接拍铃（纸巾）”。", "aids": ["扑克牌(含大小王)", "纸巾/按铃"]}, {"id": "2026-08-w3-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《敕勒歌》", "mastery": "大部分幼儿能够熟练诵读、背诵古诗，基本理解诗句字面意思，并可运用自己的话语简述每句诗句的含义。", "advice": "拍画小任务：拿画纸画出你理解诗中的景色（蓝天、草地、牛羊），画完可以让孩子看着画来说出古诗。", "aids": ["画纸", "画笔"], "flashcards": ["《敕勒歌》 北朝民歌", "敕勒川，阴山下。", "天似穹庐，笼盖四野。", "天苍苍，野茫茫，", "风吹草低见牛羊。"]}, {"id": "2026-08-w3-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "b p m f的认读以及b p m f和a的四声调的拼读和书写。", "mastery": "幼儿可以掌握单独声母的拼读，但声母的书写笔顺要多注意，“b p”先写“竖”，四线格占格规范性继续练习巩固。", "advice": "拼读小游戏：练习两拼音节 b-a→ba，p-o→po，m-a→ma，f-a→fa，少量练习，每次5-8分钟。\n💡小提示：不机械抄写，多听多读多模仿，保护孩子学习兴趣💖", "aids": ["拼音卡片(b/p/m/f)", "四线三格本"], "flashcards": ["b", "p", "m", "f", "b-a → ba", "p-o → po", "m-a → ma", "f-a → fa"]}, {"id": "2026-08-w3-lang-book", "category": "语言素养", "subject": "绘本", "content": "《999个青蛙大搬家》", "mastery": "幼儿能够理解青蛙一家搬家遇险、团结脱险的故事内容，感受大家庭相亲相爱、齐心协力的力量，并且体会搬家过程中青蛙一家所产生的不同情绪。", "advice": "亲子共读绘本，可以和孩子一起聊聊：青蛙搬家途中遇到了什么危险？它们是怎么解决的？", "aids": []}, {"id": "2026-08-w3-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“悬针竖”，书写生字“十、早、牛”", "mastery": "幼儿可以掌握书写方法，但坐姿和握笔姿势需要关注提高，写字时需要关注书写笔画以及汉字在田字格中的占格位置。", "advice": "生活小游戏：可以用手指在桌面、手心、沙发上比划悬针竖，熟悉运笔轨迹。（念口诀：重起笔，往下走，慢慢出尖）", "aids": ["田字格本", "铅笔"], "flashcards": ["悬针竖 (丨)", "十", "早", "牛"]}, {"id": "2026-08-w3-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《月亮船》", "mastery": "幼儿可以理解儿歌的意思，并且能够熟练诵读儿歌", "advice": "实景观察，建立画面感：晚上月亮出来的时候，带孩子看一看天上的月亮，结合实景念《月亮船》。聊聊月亮的样子：圆圆的、弯弯的，把儿歌内容和真实生活联系起来，孩子理解更深刻。", "aids": []}, {"id": "2026-08-w3-lang-char", "category": "语言素养", "subject": "识字", "content": "今日识字内容：月、亮、线、看、见", "mastery": "大部分幼儿可以掌握生字的认读，部分幼儿可以结合语境说出汉字的名字", "advice": "生活实景识字：出门、在家随时玩：零食包装、绘本、玩具盒子、冰箱贴，引导孩子找出课堂学过的汉字。", "aids": ["识字卡"], "flashcards": ["月", "亮", "线", "看", "见", "明", "袄", "苍", "茫", "羊"]}, {"id": "2026-08-w3-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《象迪找找看》", "mastery": "幼儿可以掌握游戏玩法", "advice": "在家继续巩固专注力观察练习。", "aids": ["《象迪找找看》教具"]}, {"id": "2026-08-w3-think-comp", "category": "思维课程", "subject": "综合", "content": "复习魔尺：大象、球、马桶。", "mastery": "部分宝贝已经能够完成，魔尺重在反复实操练习，继续多多动手就会越来越棒。", "advice": "建议让宝贝在家当小老师选择一个比较熟练图形教父母学习", "aids": ["24段魔尺"], "widgets": {"timer": true}, "diagram": {"key": "magic_ruler_2", "width": 106, "height": 119, "caption": "24段魔尺造型参考（大象/球/马桶）"}}, {"id": "2026-08-w3-think-space", "category": "思维课程", "subject": "空间", "content": "1.完整还原金字塔魔方。\n2.学习计时器使用方法。\n3.书写计时器时间", "mastery": "幼儿能够独立使用计时器计时还原金字塔魔方，并记录成绩", "advice": "建议每天练习金字塔魔方次以上。", "aids": ["金字塔魔方", "魔方计时器"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "金字塔魔方计时练习"}, "timer": true}}, {"id": "2026-08-w3-english", "category": "英语", "subject": "英语", "content": "单词：chair, computer, desk, door, window\n自我介绍：Hello everyone, I'm XX (名字). I'm a girl/boy. I'm five/six.\n句子：What's that? That's a computer.\n英文律动：《Rock scissors paper》", "mastery": "幼儿都能理解单词及句子，大部分幼儿能准确指读单词。", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：chair / computer / desk / door / window", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKY%2Bh90T5NhTZiOipLo%2FcFGR2FHduw%2Baln%2Bnu905LwlY3JMDC%2FLNbunRlkFuwWnlACra5I%2FdMaxT%2BGznYggg84Eh"}], "flashcards": ["chair", "computer", "desk", "door", "window", "What's that? That's a computer.", "I'm five/six."]}, {"id": "2026-08-w3-pe", "category": "体能", "subject": "体能", "content": "1.《小猴子爬树》\n2.《铁锁链桥》\n3.《一飞冲天》", "mastery": "体能训练顺利完成", "advice": "家长在家可以多开展户外跑跳游戏，锻炼肢体力量与平衡能力，鼓励幼儿大胆挑战，提升耐力与意志品质。", "aids": []}, {"id": "2026-08-w3-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习棋子，棋盘，以及摆棋", "mastery": "幼儿可以掌握棋子名称，以及摆棋。", "advice": "家中准备国际象棋，引导孩子摆棋。", "aids": ["国际象棋"]}, {"id": "2026-08-w3-art", "category": "创意美术", "subject": "创意美术", "content": "向阳花开", "mastery": "幼儿全部掌握", "advice": "在家可以尝试用丙烯颜料创作不同的图画", "aids": ["丙烯颜料/画笔"]}, {"id": "2026-08-w3-self", "category": "自我管理", "subject": "自我管理", "content": "用餐习惯", "mastery": "幼儿全部掌握", "advice": "保持桌面整洁，细嚼慢咽，不挑食。", "aids": []}]}, {"weekId": "2026-08-w4", "title": "2026年8月第4周（阶段复习）", "month": "8月", "isReviewWeek": true, "pdfPage": 4, "items": [{"id": "2026-08-w4-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "复习5以内加法和减法\n创编5以内加减法应用题", "mastery": "幼儿全部完成", "advice": "可以让幼儿分发零食或糖果。例如：给爸爸分了2颗糖给妈妈分了3颗糖，一共分了多少颗糖？\n或者可以带着幼儿一起买东西，例如：家里今天5个人，家里有两瓶饮料，还需要买多少瓶饮料？", "aids": ["零食/糖果道具"]}, {"id": "2026-08-w4-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《疯狂大请客》\n复习之前所学的游戏规则", "mastery": "幼儿全部掌握", "advice": "家庭中大朋友和小朋友可以进行寻宝游戏，在规定时间内找到五个相同的小物品，或者两个完全一样的物品，并把它们带到桌子上。找到最多的人即为获胜，以此来增加幼儿对5的认识。", "aids": ["《疯狂大请客》卡牌"]}, {"id": "2026-08-w4-lang-poem", "category": "语言素养", "subject": "古诗", "content": "复习古诗\n1.《悯农》（其二）\n2.《画》\n3.《敕勒歌》", "mastery": "大部分幼儿能够熟练诵读、背诵古诗，基本理解诗句字面意思，并可运用自己的话语简述每句诗句的含义。", "advice": "家长描述诗里的画面，孩子猜古诗名称并背诵。\n例：“田里农民伯伯在正午种地”→猜《悯农》；“辽阔大草原，风吹看见牛羊”→猜《敕勒歌》。", "aids": [], "flashcards": ["猜诗1：田里农民伯伯在正午种地 → 《悯农》", "猜诗2：远看山有颜色，近听水没声音 → 《画》", "猜诗3：辽阔大草原，风吹看见牛羊 → 《敕勒歌》"]}, {"id": "2026-08-w4-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "学习声母d t n l的认读，以及声母d t n l和单韵母的拼读、书写", "mastery": "大部分幼儿能够做到正确发音，也可以尝试简单拼读。书写方面还需要多加练习，重点注意d t n l的书写笔顺，以及字母在四线三格里的占格位置。", "advice": "拼读小游戏：地上摆好四拼音节卡片（da、di、ta、tu、na、ni、la、lu），家长念：d-i→di，孩子跳到di卡片上，完整把拼读过程读出来“d-i-di”。", "aids": ["拼音卡片(d/t/n/l)", "四线三格本"], "flashcards": ["d", "t", "n", "l", "d-a → da", "d-i → di", "t-a → ta", "t-u → tu", "n-a → na", "n-i → ni", "l-a → la", "l-u → lu"]}, {"id": "2026-08-w4-lang-book", "category": "语言素养", "subject": "绘本", "content": "《999个青蛙大搬家》", "mastery": "幼儿能够理解青蛙一家搬家遇险、团结脱险的故事内容，感受大家庭相亲相爱、齐心协力的力量，并且体会搬家过程中青蛙一家所产生的不同情绪。", "advice": "家长扮演青蛙爸爸/妈妈，孩子扮演小青蛙，模仿青蛙蹦蹦跳跳搬家的情景。一边玩一边体会青蛙兄弟团结、一家人互相爱护的情感。", "aids": []}, {"id": "2026-08-w4-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“垂露竖”，书写生字“个、木、禾”", "mastery": "幼儿基本掌握汉字和笔画的书写方法，但还需要重视坐姿与握笔姿势。书写过程中还要留意笔画顺序，以及汉字在田字格里的占格位置。", "advice": "宝贝在家可通过书空比划游戏练习“垂露竖”，记住收尾顿笔，观察田字格竖中线位置，注意坐姿和握笔姿势，培养书写意识。", "aids": ["田字格本", "铅笔"], "flashcards": ["垂露竖 (丨)", "个", "木", "禾"]}, {"id": "2026-08-w4-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《论语二则》", "mastery": "幼儿可以跟随老师流利朗读，大部分幼儿能够熟读成诵。幼儿能够理解“知之为知之”实事求是的道理，愿意诚实表达自己的认知。", "advice": "宝贝在家可以玩诗句接龙、情景问答、诵读表演小游戏来巩固《论语二则》。通过生活小事引导孩子明白“知之为知之，诚实求知”“学而时习之，多多复习”的道理，重在诵读感知，保护学习兴趣。", "aids": [], "flashcards": ["学而时习之，不亦说乎？", "有朋自远方来，不亦乐乎？", "知之为知之，不知为不知，是知也。"]}, {"id": "2026-08-w4-lang-char", "category": "语言素养", "subject": "识字", "content": "学习汉字“女、知、也、为、学、朋”", "mastery": "本周幼儿已基本掌握所学汉字内容，能够运用汉字进行简单组词与造句，语言运用能力有所提升。", "advice": "游戏：我说你指\n摆上写下学过的汉字，家长念出汉字名称，孩子快速用手指指出来。", "aids": ["识字卡"], "flashcards": ["女", "知", "也", "为", "学", "朋"]}, {"id": "2026-08-w4-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《象迪找找看》", "mastery": "幼儿可以掌握游戏玩法", "advice": "在家与父母比赛快速观察找图。", "aids": ["《象迪找找看》教具"]}, {"id": "2026-08-w4-think-comp", "category": "思维课程", "subject": "综合", "content": "复习魔尺：大象、球、马桶，爱心、小鱼、手枪、锤子、螃蟹", "mastery": "大部分宝贝已经能够完成全部魔尺图形", "advice": "让宝贝在家当小老师教父母学习魔尺图形，并且可以与父母比赛练习。", "aids": ["24段魔尺"], "widgets": {"timer": true}, "diagram": {"key": "magic_ruler_2", "width": 106, "height": 119, "caption": "24段魔尺造型参考（大象/球/马桶）"}}, {"id": "2026-08-w4-think-space", "category": "思维课程", "subject": "空间", "content": "1.巩固学习金字塔魔方；\n2.三阶魔方基础知识-坐标颜色黄白红橙蓝绿，部位名角块、棱、中心；\n3.学习三阶魔方基础转动-上下勾回；\n4.学习三阶魔方第一步：黄心小白花", "mastery": "幼儿已经能够独立使用计时器复原金字塔魔方并记录成绩，能牢记三阶基础知识，并按指令转动魔方，独立还原三阶第一步黄心小白花。", "advice": "建议在家练习金字塔魔方每日5次以上。", "aids": ["金字塔魔方", "三阶魔方", "魔方计时器"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "每日金字塔+三阶小白花"}, "timer": true}}, {"id": "2026-08-w4-english", "category": "英语", "subject": "英语", "content": "单词（复习）：chair, computer, desk, door, window, bag, eraser, pen, marker, ruler, ask, Chinese, name, question, speak\n句子（复习）：What's your name? My name is...... / What's this? It's a bag. / What's that? That's a computer.\n英文律动：《Rock scissors paper》", "mastery": "大部分幼儿能指读单词和句子。", "advice": "点开下方3个直达链接，分别复习8月三组核心单词和句型。", "aids": [], "links": [{"label": "🎬 跟读1：Chinese / name / ask / question / speak", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKajiQTHiM5iR5Lvng8X8fOPRiYhvV7s0NKFRwVQKDzpZL%2BB3pJot58SZBUZjKH8r05zrd488YyuHaGJL0RxeGf9"}, {"label": "🎬 跟读2：bag / eraser / marker / pen / ruler", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKYx6KtvDxMR63CykXV%2Fe0%2Fkz1xyQ21p2jmafTqqo288Gx91c5u1kD7S1ze%2FX1YfdcFc4MhUMf4vYaUbznGWLkvK"}, {"label": "🎬 跟读3：chair / computer / desk / door / window", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKY%2Bh90T5NhTZiOipLo%2FcFGR2FHduw%2Baln%2Bnu905LwlY3JMDC%2FLNbunRlkFuwWnlACroYXtpwb2u4jNROGHb0sw5"}], "flashcards": ["chair", "computer", "desk", "door", "window", "bag", "eraser", "pen", "marker", "ruler", "ask", "Chinese", "name", "question", "speak"]}, {"id": "2026-08-w4-pe", "category": "体能", "subject": "体能", "content": "1. 热身运动\n2. 律动舞蹈\n3. 室外游戏\n4. 拍球", "mastery": "小朋友了解了单手拍球要领，大部分幼儿能够连续拍球20个", "advice": "幼儿在家可以适当进行拍球练习，提升熟练度", "aids": ["篮球/拍球"], "widgets": {"counter": {"target": 20, "unit": "个", "label": "连续拍球练习"}}}, {"id": "2026-08-w4-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习棋子，棋盘，以及摆棋", "mastery": "幼儿可以掌握棋子名称，以及摆棋。", "advice": "家中准备国际象棋，引导孩子摆棋。", "aids": ["国际象棋"]}, {"id": "2026-08-w4-art", "category": "创意美术", "subject": "创意美术", "content": "葡萄熟了", "mastery": "幼儿全部掌握", "advice": "在家可以尝试用彩泥创作不同的水果作品", "aids": ["超轻粘土/彩泥"]}, {"id": "2026-08-w4-self", "category": "自我管理", "subject": "自我管理", "content": "《身体卫生》", "mastery": "幼儿全部掌握", "advice": "勤洗澡、勤换衣、勤剪指甲，保持个人卫生。", "aids": []}]}, {"weekId": "2026-09-w1", "title": "2026年9月第1周", "month": "9月", "isReviewWeek": false, "pdfPage": 5, "items": [{"id": "2026-09-w1-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "6，7的分解，组合\n6，7的加法\n6，7的减法", "mastery": "两名幼儿需要用手指辅助完成", "advice": "大朋友和小朋友可以用扑克牌进行游戏。扑克牌只留数字1-6的数字牌，大朋友随机拿一个数字，小朋友快速找另一张可以和它凑成6或7的数字。\n例如大朋友拿出2，小朋友快速拿出4（2+4=6）", "aids": ["扑克牌(1-6)"], "flashcards": ["6 = 1+5 / 2+4 / 3+3", "7 = 1+6 / 2+5 / 3+4", "6 - 2 = 4", "7 - 3 = 4"]}, {"id": "2026-09-w1-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《疯狂大请客》\n复习之前所学的游戏规则", "mastery": "幼儿全部掌握", "advice": "家庭中大朋友小朋友用扑克牌进行游戏。\n扑克牌只留数字1-7的数字。将扑克牌扣在桌面上，两人随机翻开两张牌，算出一个加法和一个减法即为获胜，可以拿走这两张牌。全部的牌都算完比一比谁的牌最多，谁就获胜。", "aids": ["扑克牌(1-7)", "《疯狂大请客》卡牌"]}, {"id": "2026-09-w1-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《古朗月行》\n唐 李白\n小时不识月，呼作白玉盘。\n又疑瑶台镜，飞在青云端。\n仙人垂两足，桂树何团团。\n白兔捣药成，问言与谁餐？", "mastery": "全部幼儿能够熟练诵读古诗，大部分幼儿能够背诵古诗，基本理解诗句字面意思，并可运用自己的话语简述每句诗句的含义。", "advice": "游戏：月亮想象画\n拿张纸，孩子画圆月亮，画完说一说：你的月亮像什么？对应古诗里的白玉盘、瑶台镜，画完可以指着自己的画完整念一遍诗句。\n🏅 幼儿可以背诵儿歌录制视频发送班级群赢得“5”优尔币。", "aids": ["画纸", "画笔"], "widgets": {"youer_coin": 5}, "flashcards": ["《古朗月行》 唐·李白", "小时不识月，呼作白玉盘。", "又疑瑶台镜，飞在青云端。", "仙人垂两足，桂树何团团。", "白兔捣药成，问言与谁餐？"]}, {"id": "2026-09-w1-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 学习声母g k h的认读以及书写\n2️⃣ 学习声母g k h和单韵母的拼读\n3️⃣ 学习三拼音节的拼读", "mastery": "大部分幼儿能够做到正确发音，也可以尝试简单拼读，需要注意的是在进行三拼音节拼读时不要忘记中间介母的发音，下周就进行加强练习。", "advice": "拼读小游戏：\n家长描述一个东西，说出它的音节，不直接说出物品。\n比如：h-ú-hú，用来喝水的，是什么？孩子猜出“壶”。\n也可以反过来，指家里物品，孩子拼读出它的音节。\n把拼读和实物挂钩，孩子不枯燥。", "aids": ["拼音卡片(g/k/h)", "四线三格本"], "flashcards": ["g", "k", "h", "g-u-ā → guā (三拼音节)", "k-u-ā → kuā", "h-u-ā → huā", "h-ú → hú (壶)"]}, {"id": "2026-09-w1-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“斜撇”，书写生字“什”", "mastery": "幼儿基本掌握汉字和笔画的书写方法，但还需要重视坐姿与握笔姿势。书写过程中还要留意笔画顺序，以及汉字在田字格里的占格位置。", "advice": "空中运笔练习：\n不用拿笔，手指在空中写斜撇，嘴里念口诀：顿一顿，往下斜，慢慢出尖尖。\n多做几遍，感受“重→轻”的力度变化，建立动作记忆，再到本子上书写。", "aids": ["田字格本", "铅笔"], "flashcards": ["斜撇 (丿)", "什"]}, {"id": "2026-09-w1-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《我骄傲，我是中国娃》", "mastery": "幼儿可以跟随老师流利朗读，大部分幼儿能够熟读成诵。孩子们在朗读中，感受身为中国娃的自豪与光荣，在心中种下热爱祖国的小小种子。", "advice": "闲暇时看一看国旗、长城相关图片，简单聊一聊身为中国小朋友的自豪感。\n利用碎片时间熟悉内容，不强迫死记硬背，感受情感优先。\n多鼓励孩子大胆表达，肯定孩子洪亮的声音与饱满情绪。", "aids": []}, {"id": "2026-09-w1-lang-char", "category": "语言素养", "subject": "识字", "content": "学习汉字“国 有 家 笔 美 时 玉 足 云 谁”", "mastery": "本周幼儿已基本掌握所学汉字内容，能够运用汉字进行简单组词与造句，语言运用能力有所提升。", "advice": "找字游戏：阅读时在书页里找出今天学过的字，看谁找的又多又准。\n温馨提醒：每次识字5-10分钟就足够，学过的字要经常复习，避免学新忘旧。\n阅读需要长期坚持，幼儿可将阅读的故事和喜欢的书籍月末在班级中分享。", "aids": ["识字卡", "绘本/图书"], "flashcards": ["国", "有", "家", "笔", "美", "时", "玉", "足", "云", "谁"]}, {"id": "2026-09-w1-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《拼音对对碰》", "mastery": "幼儿可以掌握游戏玩法", "advice": "在家可用声母韵母卡玩对对碰拼读。", "aids": ["《拼音对对碰》教具"]}, {"id": "2026-09-w1-think-comp", "category": "思维课程", "subject": "综合", "content": "学习速叠杯（3-6-3）搭与收", "mastery": "大部分宝贝能够完成正确拼搭", "advice": "速叠杯可以锻炼孩子双手配合、手眼协调、专注力，还能培养孩子抗挫折能力。\n家庭小游戏：\n【纸杯高塔挑战】用普通纸杯倒扣搭建高塔，双手交替摆放，搭好后有序收回，尽量不要碰倒。\n【双手分物游戏】准备两个小碗，双手同时拿物品分别放进碗里，练习左右手分工协作。\n小提示：不追求速度，动作稳最重要；倒塌鼓励孩子重新尝试，锻炼抗挫能力；游戏结束引导孩子把物品收好。", "aids": ["速叠杯(12个)"], "widgets": {"timer": true}}, {"id": "2026-09-w1-think-space", "category": "思维课程", "subject": "空间", "content": "1.巩固学习金字塔魔方；\n2.三阶魔方基础手法勾上回下-左右手镜像方法；\n3.学习三阶魔方第一步黄心小白花；\n4.学习三阶魔方第二步白十字；\n5.学习三阶魔方第三步白色一层。", "mastery": "本周课堂上掌握了三阶魔方“勾上回下”左右手镜像基础手法，手法标准规范。同时，可按照教学指令独立完成三阶魔方【黄心小白花】、【白十字】以及【白色一层】的还原步骤，基础知识点掌握扎实，动手实操能力有明显进步。", "advice": "建议在家练习金字塔魔方每日5次以上。", "aids": ["金字塔魔方", "三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "每日金字塔+三阶白色一层"}, "timer": true}}, {"id": "2026-09-w1-english", "category": "英语", "subject": "英语", "content": "单词：good, bad, chat, fun, calm down\n句子：It's bad to chat in class. It's good to listen in class.\n自然拼读字母：Dd\n自我介绍：Hello everyone, I'm XX (name). I'm a girl/boy. I'm five/six. I'm happy.\n英文律动：《make a circle》", "mastery": "幼儿单词全部掌握，句子可以慢慢跟读。", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：good / bad / chat / fun / calm down", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZu1k3%2B5V4ZfJC3Fj133DLwLf7KFH%2FZYDJbwaTDiCliw%2Fnl0Azcp1Y2fECO7LTULcsieWXTP89qCScjtqBgbtjT"}], "flashcards": ["good", "bad", "chat", "fun", "calm down", "Dd", "It's bad to chat in class.", "It's good to listen in class."]}, {"id": "2026-09-w1-pe", "category": "体能", "subject": "体能", "content": "拍球训练、\n感统体智能：滚球大战", "mastery": "大部分宝贝能够按照要求完成任务。", "advice": "周末可带孩子进行拍球与滚球协调游戏。", "aids": ["篮球/拍球"]}, {"id": "2026-09-w1-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习车的走法，学习象的走法", "mastery": "幼儿可以会车象的走法以及吃子", "advice": "家中准备国际象棋，引导孩子摆棋，练习【车】的走法以及【象】的走法。", "aids": ["国际象棋"]}, {"id": "2026-09-w1-art", "category": "创意美术", "subject": "创意美术", "content": "氧化的苹果", "mastery": "课堂绘画体验良好", "advice": "在家观察切开的苹果颜色变化，结合科学小常识涂色创作。", "aids": ["画纸/画笔"]}, {"id": "2026-09-w1-self", "category": "自我管理", "subject": "自我管理", "content": "防拐骗", "mastery": "全部幼儿理解", "advice": "家庭安全教育小提醒：\n请家长在家加强孩子安全方面引导：\n防拐骗：不跟陌生人离开，不接受陌生人的零食、玩具，遇到问题向熟悉的大人求助，不独自跑开。\n饮食安全：地上捡到的食物坚决不吃，他人给的食物，一定要经过家长同意才可以食用。\n可以通过情景小游戏和孩子练习，家园携手守护孩子安全。", "aids": []}]}, {"weekId": "2026-09-w2", "title": "2026年9月第2周", "month": "9月", "isReviewWeek": false, "pdfPage": 7, "items": [{"id": "2026-09-w2-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "8，9的分解，组合\n8，9的加法\n8，9的减法", "mastery": "两名幼儿需要用手指辅助完成", "advice": "大朋友和小朋友可以在家进行跳格子游戏。大朋友把数字1-8的数字写在纸上，随机摆在地面上。\n例如：当大朋友跳到2上面，小朋友就要跳在6到上面，并说出2+6=8。\n当玩凑9的时候也是一样的。也可以小朋友先跳，大朋友去找另一个数。", "aids": ["数字纸卡(1-8)"], "flashcards": ["8 = 1+7 / 2+6 / 3+5 / 4+4", "9 = 1+8 / 2+7 / 3+6 / 4+5", "8 - 3 = 5", "9 - 4 = 5"]}, {"id": "2026-09-w2-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《快乐农场》\n任意从三摞牌中翻开，翻开小鸭子数量不超过7就可以收在自己面前，超过7，就将所有的小鸭子放到盒中，由左边的小朋友继续翻牌。\n当桌面的三堆牌都拿取完的时候游戏结束，最后数一数谁的小鸭子最多谁就获胜。", "mastery": "幼儿全部掌握", "advice": "在家庭中大朋友和小朋友可以进行身体跳跳凑7的游戏。\n例如：拍手+跺脚=7\n大朋友拍手三下，小朋友就要跺脚四下，并说出3+4=7", "aids": ["《快乐农场》卡牌"]}, {"id": "2026-09-w2-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《静夜思》\n床前明月光，\n疑是地上霜。\n举头望明月，\n低头思故乡。", "mastery": "全体幼儿均可富有感情地朗诵古诗并能够独立完整背诵，诵读状态流畅。幼儿基本理解诗句字面意思，并可运用自己的话语简述每句诗句的含义。", "advice": "古诗配画小游戏：\n在家可和宝贝开展古诗绘画小练习，让孩子一边背诵古诗，一边画出诗中的场景。通过画面联想帮助孩子理解诗意、摆脱机械背诵，让孩子背诵更流利、更有感情，加深古诗记忆。\n🏅 幼儿可以背诵古诗录制视频发送班级群赢得“5”优尔币。", "aids": ["画纸/画笔"], "widgets": {"youer_coin": 5}, "flashcards": ["《静夜思》 唐·李白", "床前明月光，", "疑是地上霜。", "举头望明月，", "低头思故乡。"]}, {"id": "2026-09-w2-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 正确认读声母j q x，读准音，认清形。\n2️⃣ 正确拼读j、q、x和韵母组成的两拼音节、三拼音节；熟练掌握三拼音节的拼读方法，知道j、q、x和ü相拼ü上两点要省略的拼写规则。", "mastery": "本周学习声母j、q、x，大部分幼儿可以准确发音，能够进行简单拼读。现阶段重点难点为j、q、x与ü的拼读规则，宝贝知道拼读和书写时ü要省略两点，但部分宝贝容易遗忘规则，需要多加巩固，牢记“j q x真淘气，见到鱼眼（ü）就挖去”。", "advice": "分类分拣拼读小游戏：\n准备音节卡片：ju、qu、xu、lu、nu。\n让孩子分成两堆：一堆是j q x家族，一堆不是，分拣完成逐一拼读。\n并完整说出规则：小ü见了j q x，去掉两点还读ü。", "aids": ["拼音卡片(j/q/x/ü)"], "flashcards": ["j", "q", "x", "j-ü → ju (去掉两点还读ü)", "q-ü → qu", "x-ü → xu", "j-i-ā → jiā", "q-i-ā → qiā", "x-i-ā → xiā"]}, {"id": "2026-09-w2-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“平撇”，书写生字“千、手”", "mastery": "幼儿基本掌握汉字和笔画的书写方法，但还需要重视坐姿与握笔姿势。书写过程中还要留意笔画顺序，以及汉字在田字格里的占格位置。", "advice": "✈️ 小飞机滑翔（找手感）\n伸出食指当小飞机，念口诀：\n起笔重，平平滑，轻轻落。\n让孩子感受：平撇平短、不斜长的特点，区分普通斜撇。", "aids": ["田字格本", "铅笔"], "flashcards": ["平撇 (丿)", "千", "手"]}, {"id": "2026-09-w2-lang-story", "category": "语言素养", "subject": "故事", "content": "《盲人摸象》", "mastery": "幼儿能够理解《盲人摸象》的故事主要情节，可以说出几位盲人分别摸到大象的不同部位。大部分幼儿懂得故事蕴含的道理，知道看待事物不能只看局部，要观察整体、全面看待问题。", "advice": "故事小复述：\n亲子共同回顾《盲人摸象》，请幼儿说一说故事里的人分别摸到大象的什么地方，这个故事告诉我们什么道理。鼓励孩子结合生活说一说，生活中哪些事情需要我们看全面，锻炼语言表达与思辨能力。", "aids": []}, {"id": "2026-09-w2-lang-book", "category": "语言素养", "subject": "绘本", "content": "《蚂蚁和西瓜》", "mastery": "孩子们倾听了绘本《蚂蚁和西瓜》的故事，能够完整跟随故事画面理解情节发展。", "advice": "日常可以告诉孩子：\n遇到自己搬不动的事，可以请好朋友、家人帮忙，团结合作更厉害；好吃的、好玩的可以学会分享。", "aids": []}, {"id": "2026-09-w2-lang-char", "category": "语言素养", "subject": "识字", "content": "学习汉字“前 明 地 头 乡 地 尾 巴 净 只”", "mastery": "本周幼儿已基本掌握所学汉字内容，能够运用汉字进行简单组词与造句，语言运用能力有所提升。", "advice": "🎯 听音找字小游戏：\n家长说出字音，不出示卡片，让孩子在一堆字卡里快速挑出对应的汉字。熟练之后，家长可以读词语，孩子找出词语里包含的目标生字。\n温馨提醒：每次识字5-10分钟就足够，学过的字要经常复习，避免学新忘旧。", "aids": ["识字卡"], "flashcards": ["前", "明", "地", "头", "乡", "尾", "巴", "净", "只"]}, {"id": "2026-09-w2-lang-game", "category": "语言素养", "subject": "游戏课", "content": "《拼音对对碰》", "mastery": "幼儿可以掌握游戏玩法", "advice": "在家继续用《拼音对对碰》巩固j q x与单韵母拼读。", "aids": ["《拼音对对碰》教具"]}, {"id": "2026-09-w2-think-comp", "category": "思维课程", "subject": "综合", "content": "学习单色速叠杯完整Cycle玩法：\n3-6-3 → 6-6 → 1-10-1", "mastery": "大部分宝贝能够完成正确拼搭", "advice": "左右手对对碰玩法：\n家长打节奏（拍手/拍腿），孩子必须左右手交替动作，不能单手连动。\n1. 慢节奏：右、左、右、左 依次点桌面\n2. 快节奏：跟随节拍快速交替\n3. 挑战：家长随机快慢切换，孩子不乱手\n锻炼效果和叠杯“双手交替落杯”一模一样，改掉单手惯性、左右手均衡发力。", "aids": ["速叠杯(12个)"], "widgets": {"timer": true}}, {"id": "2026-09-w2-think-space", "category": "思维课程", "subject": "空间", "content": "1.巩固学习金字塔魔方；\n2.三阶魔方手法勾上回下练习；\n3.三阶魔方第一步黄心小白花；\n4.三阶魔方第二步白十字；\n5.三阶魔方第三步白色一层；\n6.三阶魔方第四步二层还原。", "mastery": "本周孩子课堂参与热情很高。金字塔魔方持续巩固，复原节奏更稳定。重点练习三阶“勾上回下”手法，依次完成小白花、底面白十字、白色底层，成功挑战二阶还原，跟着步骤思考，动手积极性强，遇到卡顿愿意耐心调整，进步明显。", "advice": "建议在家练习各魔方每日5次以上。", "aids": ["金字塔魔方", "三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "每日金字塔+三阶前两层还原"}, "timer": true}}, {"id": "2026-09-w2-english", "category": "英语", "subject": "英语", "content": "单词：mother, father, house, meet, nice\n句子：Who's this? This is my mother.\n自我介绍：Hello everyone, I'm XX (name). I'm a girl/boy. I'm five/six. I'm happy.\n英文律动：《I go to school》\n自然拼读字母：Ee", "mastery": "大部分幼儿可以掌握单词和句子。", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：mother / father / house / meet / nice", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZSEN3N%2FBFg5gAVZXGLUGLNLBlb4VVkUo9nIZO96fjXRJVkzf5MGiDgVvwnFtWvYOH2KXy1NTtvjg9aRvd3oncY"}], "flashcards": ["mother", "father", "house", "meet", "nice", "Ee", "Who's this? This is my mother."]}, {"id": "2026-09-w2-pe", "category": "体能", "subject": "体能", "content": "拍球训练、\n感统体智能：滚球大战", "mastery": "大部分宝贝能够按照要求完成任务。", "advice": "保持日常户外拍球练习。", "aids": ["篮球/拍球"]}, {"id": "2026-09-w2-chess", "category": "国际象棋", "subject": "国际象棋", "content": "国际象棋\n1.复习车和象的走法及吃子\n2.象走到线必须是正斜线，每次经过的格子颜色相同\n3.象在棋盘上有一半的格子无法到达\n4.对弈练习", "mastery": "幼儿可以会车象的走法以及吃子", "advice": "家中准备国际象棋，引导孩子摆棋，练习【车】的走法以及【象】的走法。", "aids": ["国际象棋"]}, {"id": "2026-09-w2-art", "category": "创意美术", "subject": "创意美术", "content": "小蜗牛", "mastery": "幼儿全部完成", "advice": "引导孩子观察螺旋线条与色彩搭配。", "aids": ["彩泥/画笔"]}]}, {"weekId": "2026-09-w3", "title": "2026年9月第3周", "month": "9月", "isReviewWeek": false, "pdfPage": 8, "items": [{"id": "2026-09-w3-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "复习“8，9的分解，组合\n8，9的加法\n8，9的减法”", "mastery": "大部分幼儿可以完全掌握", "advice": "利用《疯狂大请客》和《快乐农场》卡牌，进行分数加减法游戏。在游戏过程中逐步建立数与量的概念，提升数感。", "aids": ["《疯狂大请客》卡牌", "《快乐农场》卡牌"]}, {"id": "2026-09-w3-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《快乐农场》\n任意从三摞牌中翻开，翻开小鸭子数量不超过7就可以收在自己面前，超过7，就将所有的小鸭子放到盒中，由左边的小朋友继续翻牌。\n当桌面的三堆牌都拿取完的时候游戏结束，最后数一数谁的小鸭子最多谁就获胜。", "mastery": "幼儿全部掌握", "advice": "本期教具已经发放完毕，可以和小朋友进行《疯狂大请客》和《快乐农场》的小游戏，邀请小朋友讲述游戏规则及如何发牌、出牌、罚牌。", "aids": ["《快乐农场》卡牌", "《疯狂大请客》卡牌"]}, {"id": "2026-09-w3-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《回乡偶书》\n贺知章\n少小离家老大回，乡音无改鬓毛衰。\n儿童相见不相识，笑问客从何处来。", "mastery": "幼儿能够流利朗读《回乡偶书》，读准字音，可以理解古诗大致含义，能感受古诗的意境，愿意主动朗诵，大胆表达自己的理解。", "advice": "读完古诗，和孩子聊一聊：\n1) 贺知章老爷爷离开家乡多久啦？\n2) 为什么家乡的小朋友不认识老爷爷？\n帮助孩子理解诗意，不死记硬背。\n🏅 幼儿可以背诵古诗录制视频发送班级群赢得“5”优尔币。", "aids": [], "widgets": {"youer_coin": 5}, "flashcards": ["《回乡偶书》 唐·贺知章", "少小离家老大回，", "乡音无改鬓毛衰。", "儿童相见不相识，", "笑问客从何处来。"]}, {"id": "2026-09-w3-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 正确认读并书写声母z c s，读准音，认清形。\n2️⃣ 正确拼读z c s和韵母组成的两拼音节、三拼音节；熟练掌握三拼音节的拼读方法，知道z c s是平舌音声母", "mastery": "幼儿可以认读z、c、s，但部分小朋友平舌发音偶尔不到位；可以进行简单拼读，遇到多音节需要提示。", "advice": "在家可以玩教具《拼音对对碰》里面的声母牌，提升单独声母熟练度", "aids": ["《拼音对对碰》教具"], "flashcards": ["z (平舌音)", "c (平舌音)", "s (平舌音)", "z-a → za", "c-a → ca", "s-a → sa", "z-u-ò → zuò"]}, {"id": "2026-09-w3-lang-write", "category": "语言素养", "subject": "书写", "content": "学习书写笔画“竖撇”，汉字“月、朋”", "mastery": "幼儿可以理解竖撇“先竖后撇”的特点，能独立书写，但有时握笔内容易倾斜，撇的部分出锋控制不稳，书写姿势需继续关注。", "advice": "找笔画小侦探：\n在生字卡片（如：月、朋）里找出竖撇，请孩子指出来，说一说这个笔画叫什么。\n巩固认识，知道哪些字带有竖撇。", "aids": ["田字格本", "铅笔", "识字卡"], "flashcards": ["竖撇 (先竖后撇)", "月", "朋"]}, {"id": "2026-09-w3-lang-song", "category": "语言素养", "subject": "儿歌", "content": "我们的梦", "mastery": "幼儿能够完整、流利朗诵儿歌，发音清晰，语调自然，理解儿歌里“梦”的含义，知道个人小小的梦想汇聚成祖国的大家想，萌发热爱祖国的情感。", "advice": "日常可以看看简单的爱国绘本、国旗图片，讲讲身边普通人的工作（医生、老师、军人），告诉孩子这些人都在用努力守护我们的国家。让孩子知道热爱祖国就在生活小事里，爱护国旗、懂礼貌、认真学习，都是热爱祖国的表现。", "aids": []}, {"id": "2026-09-w3-lang-book", "category": "语言素养", "subject": "绘本", "content": "《蚂蚁和西瓜》延伸活动", "mastery": "幼儿能够跟着老师回顾绘本故事，了解故事主线，能够说出蚂蚁搬西瓜情节，可以观察到部分画面细节，在引导下感受到蚂蚁齐心协力的品质，愿意参与故事讨论，但表达想法时需要老师进行部分引导。", "advice": "绘本拓展小联想：\n回家以后可以和爸爸妈妈聊聊：生活里哪些事情需要大家一起合作完成？比如收拾玩具、打扫房间，把绘本道理联系到日常生活。", "aids": []}, {"id": "2026-09-w3-lang-char", "category": "语言素养", "subject": "识字", "content": "学习生字“毛 从 客 回 无 的 长 年 好 全 飞”，了解多音字“的 长 好”", "mastery": "本周幼儿已基本掌握所学汉字内容，能够运用汉字进行简单组词与造句，语言运用能力有所提升。", "advice": "找字大挑战：\n拿绘本、报纸，指定一个学过的汉字，让孩子在页面里圈出来，数一数一共找到几个。\n——在真实阅读场景识字，明白汉字就在书本里。\n温馨提醒：每次识字5-10分钟就足够，学过的字要经常复习，避免学新忘旧。", "aids": ["识字卡", "绘本/报纸"], "flashcards": ["毛", "从", "客", "回", "无", "的 (de/dí/dì)", "长 (cháng/zhǎng)", "年", "好 (hǎo/hào)", "全", "飞"]}, {"id": "2026-09-w3-lang-game", "category": "语言素养", "subject": "游戏课", "content": "优尔自主识字翻翻卡", "mastery": "幼儿可以掌握翻翻卡玩法", "advice": "回家以后可以进行优尔自主识字翻翻卡练习，提升拼音拼读和识字量~", "aids": ["《优尔识字翻翻卡》"]}, {"id": "2026-09-w3-think-comp", "category": "思维课程", "subject": "综合", "content": "复习单色叠杯\n学习双人叠杯", "mastery": "大部分宝贝已经掌握双人叠杯方法", "advice": "家里有速叠杯的宝贝可以尝试在家完成单人叠杯的拼搭，也可以当小老师教父母学习。", "aids": ["速叠杯(12个)"], "widgets": {"timer": true}}, {"id": "2026-09-w3-think-space", "category": "思维课程", "subject": "空间", "content": "1.巩固学习金字塔魔方；\n2.学习三阶魔方还原顶层。", "mastery": "本周孩子重点学习三阶魔方二层及顶层还原，手法“勾上回下”“上勾下提”“上勾下回”，能够独立完成前两层复原并识别顶层情况。", "advice": "建议在家练习金字塔魔方每日5次。", "aids": ["金字塔魔方", "三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "每日魔方练习"}, "timer": true}}, {"id": "2026-09-w3-english", "category": "英语", "subject": "英语", "content": "单词：beautiful, love, parents, photo, young\n句子：Who are they? They are my parents.\n自我介绍：There are three people in my family.\n英文律动：《finger family》\n自然拼读字母：Ff", "mastery": "大部分幼儿可以指读单词和句子。", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：beautiful / love / parents / photo / young", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKb8imcJz%2FBsWX7wzMeLYnW4iUIgF3FKRxgg6TXfYlgBMI%2FErGqSJhuZY3woOIUFkxariLAQpgUbxLCS91Ob2wbA"}], "flashcards": ["beautiful", "love", "parents", "photo", "young", "Ff", "Who are they? They are my parents.", "There are three people in my family."]}, {"id": "2026-09-w3-pe", "category": "体能", "subject": "体能", "content": "充气月饼", "mastery": "重点培养孩子课堂常规，强化大肢体协调能力，建立团队合作意识。课程教具丰富、趣味性强，主要锻炼孩子全身协调、四肢力量以及身体控制能力", "advice": "可以和孩子玩直线行走、原地跳跃、毛毛虫爬行、滚球躲闪小游戏，每次5-10分钟，锻炼平衡、力量与身体协调性，玩耍时注意安全。", "aids": []}, {"id": "2026-09-w3-chess", "category": "国际象棋", "subject": "国际象棋", "content": "1、复习摆棋和棋子车和象的走法及吃子。\n2、学习棋子后的走法及吃子，车和象的走法相加就是后的走法。\n3、形容后走棋是“米”号，后是大米。", "mastery": "了解车象后的走法", "advice": "家中对弈，将车象后提到5行和6行进行吃子练习", "aids": ["国际象棋"]}, {"id": "2026-09-w3-art", "category": "创意美术", "subject": "创意美术", "content": "卷纸八爪鱼", "mastery": "幼儿可以掌握小章鱼制作方法", "advice": "利用家里废旧卷纸筒与彩纸进行手工延伸创作。", "aids": ["卷纸筒", "彩纸/剪刀"]}, {"id": "2026-09-w3-self", "category": "自我管理", "subject": "自我管理", "content": "口腔卫生", "mastery": "幼儿可以理解保护口腔牙齿的重要性", "advice": "少吃糖果、黏零食、甜饮料，甜食尽量随正餐吃，吃完漱口。不边玩边吃改掉咬手指、咬铅笔、张口呼吸等坏习惯，不用牙咬硬物。", "aids": []}, {"id": "2026-09-w3-fencing", "category": "击剑", "subject": "击剑", "content": "1.击剑实战讲解\n2.实战分组：团队赛/个人赛", "mastery": "综合前几节课学到的内容，让孩子在实战中锻炼专项动作和身体素质。\n适应实战氛围，提高孩子对击剑的积极性，增强专注力和自信心，在实战中培养孩子的进攻意识。\n提高兴趣，让孩子对击剑更加了解。", "advice": "在家可让孩子演示击剑实战礼仪与基本步法。", "aids": []}]}, {"weekId": "2026-09-w4", "title": "2026年9月第4周（阶段复习）", "month": "9月", "isReviewWeek": true, "pdfPage": 9, "items": [{"id": "2026-09-w4-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "10的分解组合\n10的加法", "mastery": "大部分幼儿可以完全掌握", "advice": "大朋友和小朋友可以在家进行找朋友的游戏，可以将去掉功能牌的快乐农场牌正面向上随机摆放在桌面上，大朋友说一个数字，小朋友快速找到表示它好朋友的牌，并说出几+几=10即为获胜。\n例如：大朋友说4，小朋友找到6只小鸭子的牌，并说出4+6=10即为获胜。（也可以用两张加起来是6的牌表示6）", "aids": ["《快乐农场》卡牌/扑克牌"], "flashcards": ["10 = 1+9", "10 = 2+8", "10 = 3+7", "10 = 4+6", "10 = 5+5"]}, {"id": "2026-09-w4-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《快乐农场》\n复习之前所学的游戏规则。\n当轮到自己时，可以选择不翻牌，用赶鸭人救盒子里面的所有小鸭子。当翻出小鸭子和大灰狼时，将小鸭子放到盒里，大灰狼放到盒的下面。", "mastery": "幼儿全部掌握", "advice": "大朋友和小朋友可以在家一起玩《快乐农场》，并且小朋友可以当做小老师来给爸爸妈妈们讲述游戏规则及如何发牌、出牌、罚牌。", "aids": ["《快乐农场》卡牌"]}, {"id": "2026-09-w4-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 复习巩固所学声母、单韵母，能够正确认读、规范书写，读准字音、认清字形。\n2️⃣ 熟练拼读声母与单韵母组成的两拼音节、三拼音节，巩固拼读方法。", "mastery": "大部分幼儿能够认读声母、单韵母，认清字形，发音标准；多数幼儿可以熟练拼读两拼音节、三拼音节，掌握拼读技巧；少数幼儿容易混淆外形相近字母，平舌音发音有待巩固，拼读时会出现停顿，仍有提升空间。", "advice": "在家可以玩教具《拼音对对碰》里面的声母牌，提升单独声母熟练度", "aids": ["《拼音对对碰》教具"], "flashcards": ["a o e i u ü", "b p m f d t n l", "g k h j q x z c s"]}, {"id": "2026-09-w4-lang-write", "category": "语言素养", "subject": "书写", "content": "学习书写笔画“斜捺”，汉字“人、八”", "mastery": "大部分幼儿能够书写“斜捺”，基本掌握书写方法，了解由轻到重、末端出捺脚的要点，可独立进行书写练习；多数幼儿握笔完整，笔画走向平稳，书写姿势需继续关注。", "advice": "空中画滑梯：\n宝贝伸出手指，在空中画斜捺。家长念边口诀，孩子跟着比划。可以比赛：看谁的滑梯顿得最漂亮，不用纸笔，轻松熟悉笔画走势。", "aids": ["田字格本", "铅笔"], "flashcards": ["斜捺 (㇏)", "人", "八"]}, {"id": "2026-09-w4-lang-story", "category": "语言素养", "subject": "故事", "content": "《渔夫和金鱼》", "mastery": "大部分幼儿能够梳理故事脉络，了解起因、经过与结果，能讲出渔夫捞到金鱼、金鱼答应实现愿望、老太婆不断贪心索取，最终一切恢复原样的主要情节。大部分幼儿可脱离提示分段复述故事。", "advice": "家长可以多鼓励孩子大胆完整复述故事，锻炼孩子的语言表达、逻辑思维和记忆力。同时引导孩子明白：懂得知足、懂得珍惜，才会拥有更多快乐，帮助孩子从小建立良好的心态与正确的价值观。", "aids": []}, {"id": "2026-09-w4-lang-char", "category": "语言素养", "subject": "识字", "content": "学习生字“住 鱼 打 它 爷 什”，了解多音字“打 什”", "mastery": "本周幼儿已基本掌握所学汉字内容，能够运用汉字进行简单组词与造句，语言运用能力有所提升。", "advice": "生活识字大发现：\n出门或者在家的时候，引导孩子寻找生活中的汉字。如玩具、绘本、门牌。看到认识的字鼓励子读出来。", "aids": ["识字卡"], "flashcards": ["住", "鱼", "打 (dǎ/dá)", "它", "爷", "什 (shén/shí)"]}, {"id": "2026-09-w4-think-comp", "category": "思维课程", "subject": "综合", "content": "学习双色叠杯", "mastery": "大部分幼儿已经掌握方法可以独立完成", "advice": "家里有速叠杯的宝贝可以尝试在家当小老师教父母学习双人叠杯的方法，假期可以与父母合作练习。", "aids": ["速叠杯(双色)"], "widgets": {"timer": true}}, {"id": "2026-09-w4-think-space", "category": "思维课程", "subject": "空间", "content": "1.学习三阶魔方还原顶层。\n2.三阶魔方G公式手法学习。\n3.三阶魔方三棱换公式手法学习。\n4.复习巩固金字塔魔方。", "mastery": "本周孩子重点学习三阶魔方顶层还原技巧，两个特殊公式手法及通过故事联想记忆公式的方法。能够独立完成前两层复原并识别顶层情况，探索还原整个魔方6面颜色。", "advice": "1.练习金字塔魔方\n练习要求：累计录制5次还原视频发群内打卡。\n2.自主练习三阶魔方所掌握的内容无打卡任务。", "aids": ["金字塔魔方", "三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "录制金字塔魔方还原视频打卡"}, "timer": true}}, {"id": "2026-09-w4-english", "category": "英语", "subject": "英语", "content": "单词（复习）：good, bad, fun, chat, calm down, mother, father, house, meet, nice, beautiful, love, photo, young, parents\n句子（复习）：It's bad to chat in class. / Who's this? This is my mother. / Who are they? They are my parents.\n律动：《dance with alligator》\n自我介绍：There are three people in my family.\n绘本：《open and close》", "mastery": "大部分幼儿可以指读单词和句子。", "advice": "点开下方3个直达链接，跟读9月全部单词和句子", "aids": [], "links": [{"label": "🎬 跟读1：good / bad / chat / fun / calm down", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZu1k3%2B5V4ZfJC3Fj133DLwLf7KFH%2FZYDJbwaTDiCliw%2Fnl0Azcp1Y2fECO7LTULcsieWXTP89qCScjtqBgbtjT"}, {"label": "🎬 跟读2：mother / father / house / meet / nice", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZSEN3N%2FBFg5gAVZXGLUGLNLBlb4VVkUo9nIZO96fjXRJVkzf5MGiDgVvwnFtWvYOH2KXy1NTtvjg9aRvd3oncY"}, {"label": "🎬 跟读3：beautiful / love / parents / photo / young", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKb8imcJz%2FBsWX7wzMeLYnW4iUIgF3FKRxgg6TXfYlgBMI%2FErGqSJhuZY3woOIUFkxariLAQpgUbxLCS91Ob2wbA"}], "flashcards": ["good", "bad", "fun", "chat", "calm down", "mother", "father", "house", "meet", "nice", "beautiful", "love", "photo", "young", "parents"]}, {"id": "2026-09-w4-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习", "mastery": "大部分幼儿可以完成", "advice": "在家或户外练习双手与单手交替拍球。", "aids": ["篮球/拍球"]}, {"id": "2026-09-w4-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习车马象后的走法", "mastery": "幼儿能够进行吃子练习", "advice": "课后在家下棋不用国王，小兵与马不动，将车象后提到3行和6行，进行吃子练习，如图所示", "aids": ["国际象棋"], "diagram": {"key": "chess_drill", "width": 75, "height": 145, "caption": "国际象棋：车象后移至第3/6行吃子练习摆棋图"}}, {"id": "2026-09-w4-art", "category": "创意美术", "subject": "创意美术", "content": "小黄圆大变身", "mastery": "幼儿能够发挥想象力", "advice": "生活中多引导孩子观察圆形物品，鼓励孩子大胆想象，在家可以提供画笔，让孩子自由添画创作，多肯定孩子的创意，激发想象力。", "aids": ["画纸/画笔"]}, {"id": "2026-09-w4-self", "category": "自我管理", "subject": "自我管理", "content": "珍惜时间", "mastery": "幼儿初步建立珍惜时间的意识，能理解按时做事的简单道理，愿意尝试自己整理物品、不拖拉。但时间概念较抽象，部分幼儿自控力不足，活动中懂得道理，实际生活仍需要成人提醒。后续将结合一日生活持续渗透，加强家园配合，进一步培养幼儿自我管理能力。", "advice": "家长要帮孩子养成规律作息，借助小工具感知时间，鼓励孩子独立完成力所能及的小事，多给予正面鼓励，家园保持一致，在生活中慢慢培养孩子的时间观念和自我管理能力。", "aids": ["沙漏/小闹钟"]}]}, {"weekId": "2026-09-w5", "title": "2026年9月第5周（假期总复习）", "month": "9月", "isReviewWeek": true, "pdfPage": 10, "items": [{"id": "2026-09-w5-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "10的分解组合\n10的加法", "mastery": "大部分幼儿可以完全掌握", "advice": "大朋友和小朋友可以在家进行找朋友的游戏，可以将去掉功能牌的快乐农场牌正面向上随机摆放在桌面上，大朋友说一个数字，小朋友快速找到表示它好朋友的牌，并说出几+几=10即为获胜。\n例如：大朋友说4，小朋友找到6只小鸭子的牌，并说出4+6=10即为获胜。（也可以用两张加起来是6的牌表示6）", "aids": ["《快乐农场》卡牌/扑克牌"]}, {"id": "2026-09-w5-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《快乐农场》\n复习之前所学的游戏规则。\n当轮到自己时，可以选择不翻牌，用赶鸭人救盒子里面的所有小鸭子。当翻出小鸭子和大灰狼时，将小鸭子放到盒里，大灰狼放到盒的下面。", "mastery": "幼儿全部掌握", "advice": "大朋友和小朋友可以在家一起玩《快乐农场》，并且小朋友可以当做小老师来给爸爸妈妈们讲述游戏规则及如何发牌、出牌、罚牌。", "aids": ["《快乐农场》卡牌"]}, {"id": "2026-09-w5-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 复习巩固所学声母、单韵母，能够正确认读、规范书写，读准字音、认清字形。", "mastery": "幼儿能够准确认读声母，读音清晰响亮；看到声母卡片可以快速读出，但个别形近声母易混淆。", "advice": "在家可以玩教具《拼音对对碰》里面的声母牌，提升单独声母熟练度", "aids": ["《拼音对对碰》教具"]}, {"id": "2026-09-w5-lang-poem", "category": "语言素养", "subject": "古诗", "content": "复习古诗：《古朗月行》《回乡偶书》《静夜思》", "mastery": "幼儿能够独立背诵古诗，并且理解古诗的基础意思。", "advice": "理解诗意，简单讲画面：\n读的时候用通俗语言讲讲诗句描绘的画面，比如月亮、家乡、花草景色，孩子看懂场景，更容易记住诗句。", "aids": [], "flashcards": ["《古朗月行》：小时不识月，呼作白玉盘...", "《回乡偶书》：少小离家老大回，乡音无改鬓毛衰...", "《静夜思》：床前明月光，疑是地上霜..."]}, {"id": "2026-09-w5-lang-char", "category": "语言素养", "subject": "识字", "content": "复习学过的生字：\n国 有 家 笔 美 时 玉 足 云 谁 牙 尾 巴 净 只 前 明 地 头 乡 的 长 年 好 全 飞 毛 从 客 回 无 住 鱼 打 它 爷 什", "mastery": "本周幼儿已基本掌握所学汉字内容，但个别生字还需要继续加强熟练度。", "advice": "生活中随处识字：\n利用家里物品、零食包装、路牌、绘本指认汉字，不用死记硬背，在生活场景里多看多认，孩子记得更牢。", "aids": ["识字卡"], "flashcards": ["国", "有", "家", "笔", "美", "时", "玉", "足", "云", "谁", "牙", "尾", "巴", "净", "只", "前", "明", "地", "头", "乡", "的", "长", "年", "好", "全", "飞", "毛", "从", "客", "回", "无", "住", "鱼", "打", "它", "爷", "什"]}, {"id": "2026-09-w5-think-comp", "category": "思维课程", "subject": "综合", "content": "1.复习速叠杯\n2.学习七巧板", "mastery": "大部分幼儿能够完成课堂任务", "advice": "放假期间，家长可以和孩子一起练习速叠杯。七巧板是很好的益智教具，孩子们刚接触，假期可以让宝贝自由随意摆拼，不用急于拼出指定图案，先让孩子感受板块形状，自由发挥想象，大胆尝试拼搭，在玩耍中熟悉七巧板，锻炼观察力与空间思维。", "aids": ["速叠杯", "七巧板"], "widgets": {"timer": true}}, {"id": "2026-09-w5-think-space", "category": "思维课程", "subject": "空间", "content": "1.G公式：上勾下踢 上勾下拳 下按 上上回下回\n2.火锅公式：上上桌上桌 下肉下肉 下桌下\n第1步黄心小白花  第2步白十字\n第3步白色一层    第4步中间二层\n第5步黄十字      第6步黄色面\n第7步找眼睛      第8步找鼻子", "mastery": "本周幼儿重点学习三阶魔方整体还原的技巧，能够独立完成魔方从完全打乱状态到黄色面，最后两步（G公式）（火锅公式）手法难度较高，仍需要多练习巩固。", "advice": "练习要求：每日练习所学魔方步骤至少1次，录视频打卡，累计录制5次以上还原视频发群内。", "aids": ["三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "三阶魔方视频打卡"}, "timer": true}, "flashcards": ["第1步：黄心小白花 → 第2步：白十字", "第3步：白色一层 → 第4步：中间二层", "第5步：黄十字 → 第6步：黄色面", "第7步找眼睛（G公式）：上勾下踢 上勾下拳 下按 上上回下回", "第8步找鼻子（火锅公式）：上上桌上桌 下肉下肉 下桌下"]}, {"id": "2026-09-w5-english", "category": "英语", "subject": "英语", "content": "单词（复习）：good, bad, fun, chat, calm down, mother, father, house, meet, nice, beautiful, love, photo, young, parents\n句子（复习）：It's bad to chat in class. / Who's this? This is my mother. / Who are they? They are my parents.\n律动：《dance with alligator》\n自我介绍：There are three people in my family.\n绘本：《open and close》", "mastery": "大部分幼儿可以指读单词和句子。", "advice": "点开下方3个直达链接，假期巩固9月英语内容", "aids": [], "links": [{"label": "🎬 跟读1：good / bad / chat / fun / calm down", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZu1k3%2B5V4ZfJC3Fj133DLwLf7KFH%2FZYDJbwaTDiCliw%2Fnl0Azcp1Y2fECO7LTULcsieWXTP89qCScjtqBgbtjT"}, {"label": "🎬 跟读2：mother / father / house / meet / nice", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZSEN3N%2FBFg5gAVZXGLUGLNLBlb4VVkUo9nIZO96fjXRJVkzf5MGiDgVvwnFtWvYOH2KXy1NTtvjg9aRvd3oncY"}, {"label": "🎬 跟读3：beautiful / love / parents / photo / young", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKb8imcJz%2FBsWX7wzMeLYnW4iUIgF3FKRxgg6TXfYlgBMI%2FErGqSJhuZY3woOIUFkxariLAQpgUbxLCS91Ob2wbA"}]}, {"id": "2026-09-w5-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习", "mastery": "大部分幼儿可以完成", "advice": "假期坚持拍球运动。", "aids": ["篮球/拍球"]}, {"id": "2026-09-w5-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习车马象后的走法", "mastery": "幼儿能够进行吃子练习", "advice": "课后在家下棋不用国王，小兵与马不动，将车象后提到3行和6行，进行吃子练习，如图所示", "aids": ["国际象棋"], "diagram": {"key": "chess_drill", "width": 75, "height": 145, "caption": "国际象棋：车象后移至第3/6行吃子练习摆棋图"}}, {"id": "2026-09-w5-art", "category": "创意美术", "subject": "创意美术", "content": "小黄圆大变身", "mastery": "幼儿能够发挥想象力", "advice": "生活中多引导孩子观察圆形物品，鼓励孩子大胆想象，在家可以提供画笔，让孩子自由添画创作，多肯定孩子的创意，激发想象力。", "aids": ["画纸/画笔"]}, {"id": "2026-09-w5-self", "category": "自我管理", "subject": "自我管理", "content": "珍惜时间", "mastery": "幼儿初步建立珍惜时间的意识，能理解按时做事的简单道理，愿意尝试自己整理物品、不拖拉。", "advice": "家长要帮孩子养成规律作息，借助小工具感知时间，鼓励孩子独立完成力所能及的小事，多给予正面鼓励，家园保持一致，在生活中慢慢培养孩子的时间观念和自我管理能力。", "aids": []}]}, {"weekId": "2026-10-w1", "title": "2026年10月第1周", "month": "10月", "isReviewWeek": false, "pdfPage": 11, "items": [{"id": "2026-10-w1-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "10以内数的守恒", "mastery": "幼儿全部掌握", "advice": "大朋友小朋友可以在家进行数字游戏，大朋友拿出十以内任意数量的任意一种东西，小朋友在家里找一找有没有相同数量的任意一种东西，找到即为获胜。\n例如：妈妈拿出来了6颗糖🍬，小朋友就可以找一找家里还有什么是6个的（比如6根筷子🥢），找到即为获胜。", "aids": ["糖果/筷子等日常小物件"]}, {"id": "2026-10-w1-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《食全十美》\n小朋友们同时翻牌，谁先找到两张数字牌加起来是十，谁先拍铃。\n例如：4+6=10，将两张牌拿走背面向上放在自己面前做为赢牌。\n游戏结束谁赢的牌最多谁就获胜。", "mastery": "幼儿全部掌握", "advice": "大朋友和小朋友可以在家一起玩《快乐农场》，并且小朋友可以当做小老师来给爸爸妈妈们讲述游戏规则。", "aids": ["《食全十美》卡牌", "《快乐农场》卡牌"]}, {"id": "2026-10-w1-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1.正确认读声母zh ch sh r，读准音，认清形。\n2.正确拼读zh ch sh r和单韵母组成的两拼音节和三拼音节。", "mastery": "大部分幼儿能认读zh、ch、sh、r，读准翘舌音，可拼读两拼音节、三拼音节，能区分平舌、翘舌音，少数幼儿发音不准、易混淆平翘舌，拼读偶尔卡顿，有待加强。", "advice": "在家可以玩教具《拼音对对碰》里面的声母牌，提升单独声母熟练度", "aids": ["《拼音对对碰》教具"], "flashcards": ["zh (翘舌音)", "ch (翘舌音)", "sh (翘舌音)", "r (翘舌音)", "zh-a → zha", "ch-a → cha", "sh-a → sha", "r-e → re"]}, {"id": "2026-10-w1-lang-poem", "category": "语言素养", "subject": "古诗", "content": "复习古诗\n《回乡偶书》《静夜思》《古朗月行》", "mastery": "幼儿能够独立背诵古诗，并且理解古诗的基础意思。", "advice": "理解诗意，简单讲画面：\n读的时候用通俗语言讲讲诗句描绘的画面，比如月亮、家乡、花草景色，孩子看懂场景，更容易记住诗句。", "aids": []}, {"id": "2026-10-w1-think-comp", "category": "思维课程", "subject": "综合", "content": "七巧板拼图", "mastery": "大部分幼儿能够完成课堂任务", "advice": "家长朋友们可以陪伴宝贝一起练习七巧板拼图。在拼搭游戏中，引导孩子观察图形、尝试拆分与组合，锻炼视觉空间能力。不用追求速度，多给孩子动手尝试的机会，享受亲子游戏时光。", "aids": ["七巧板"], "widgets": {"timer": true}, "diagram": {"key": "tangram_7_a", "width": 164, "height": 100, "caption": "七巧板课堂拼图造型参考"}}, {"id": "2026-10-w1-think-space", "category": "思维课程", "subject": "空间", "content": "1.G公式：上勾下踢 上勾下拳 下按 上上回下回\n2.火锅公式：上上桌上桌 下肉下肉 下桌下\n第1步黄心小白花  第2步白十字\n第3步白色一层    第4步中间二层\n第5步黄十字      第6步黄色面\n第7步找眼睛      第8步找鼻子\n学习三阶魔方速拧手法及观察方法。", "mastery": "本周幼儿重点学习三阶魔方整体还原的技巧，能够独立完成魔方从完全打乱状态到黄色面，最后两步（G公式）（火锅公式）手法难度较高，仍需要多练习巩固。", "advice": "练习要求：每日练习所学魔方步骤至少1次，录视频打卡发群内。", "aids": ["三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "三阶魔方视频打卡"}, "timer": true}}, {"id": "2026-10-w1-english", "category": "英语", "subject": "英语", "content": "单词：fat, mirror, short, tall, thin\n句子：She is thin and beautiful. He is tall and old.\n律动：《row row row your boat》\n自我介绍：There are three people in my family. Daddy, mommy and me.\n绘本：《My clothes are too small》", "mastery": "大部分幼儿能指读单词和句子。", "advice": "点开直达链接，跟读单词与句型", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：fat / mirror / short / tall / thin", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKaplkuUyPud65Xqtg3sf%2BtVppZAca9%2FlDLM97XPzNI%2F68p1UUODzcmP1u7uTyzcRSDJ7GcyN5HRi5m8akItGhWm"}], "flashcards": ["fat", "mirror", "short", "tall", "thin", "She is thin and beautiful.", "He is tall and old."]}, {"id": "2026-10-w1-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习\n感统体智能训练", "mastery": "大部分幼儿可以完成", "advice": "假期在家可以进行适当的体育训练", "aids": ["篮球/拍球"]}, {"id": "2026-10-w1-chess", "category": "国际象棋", "subject": "国际象棋", "content": "国际象棋\n学习王的走法及吃子知识重点\n1、复习摆棋和棋子车、象、后的走法及吃子。\n2、学习棋子王的走法及吃子，王同后，每个方向都可以走，但每次只能走一格。\n3、形容王走棋是“米”号，王是小米。\n课堂练习 对弈", "mastery": "幼儿可以掌握基础的下棋规则，熟练度需继续加强", "advice": "对弈练习：\n王的走法与后相似，横竖斜行均可，但每步只能走一格。王不能送给对方吃，王的走法可以概括为四句口诀：国王不住紫禁城，一步一格缓缓行，六军之中最尊贵，一旦杀王定输赢。", "aids": ["国际象棋"], "flashcards": ["国王不住紫禁城，", "一步一格缓缓行，", "六军之中最尊贵，", "一旦杀王定输赢。"]}, {"id": "2026-10-w1-self", "category": "自我管理", "subject": "自我管理", "content": "读书习惯", "mastery": "幼儿能够倾听“囊萤映雪”的故事，知道4月23日是世界读书日，愿意跟着朗读读书谣，初步懂得读书的好处。", "advice": "固定阅读时间，培养自律习惯 营造书香家庭氛围，鼓励孩子大胆表达，爱护视力，科学阅读", "aids": ["绘本/图书"]}]}, {"weekId": "2026-10-w2", "title": "2026年10月第2周", "month": "10月", "isReviewWeek": false, "pdfPage": 12, "items": [{"id": "2026-10-w2-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "认识10以内数字的等差关系，感知数字间大小、增减规律。\n学习序数1-10，区分基数与序数：分清“有几个”和“第几个”。", "mastery": "幼儿全部掌握", "advice": "引导幼儿建立数感，理解数字的多重含义，锻炼观察、对比与逻辑思考能力，在家可以借助积木、零食等生活物品，和孩子玩数一数、排顺序的小游戏巩固知识。", "aids": ["积木/小零食"]}, {"id": "2026-10-w2-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《食全十美》\n复习游戏规则：玩家同时翻牌，谁先找到两张数字牌加起来为十，谁先拍铃。如果看到两组数字或三组数字相加=10可以连续拍铃两下或者三下。\n游戏结束时牌多者获胜。", "mastery": "幼儿全部掌握", "advice": "大朋友和小朋友可以在家一起玩《食全十美》，游戏之中感受小朋友计算速度和观察能力的变化，及时给出表扬。", "aids": ["《食全十美》卡牌"]}, {"id": "2026-10-w2-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1.正确认读声母y w，读准音，认清形。\n2.正确拼读y w和单韵母组成的音节。\n3.复习所有声母", "mastery": "大部分幼儿能认读y、w，并且和单韵母“i、u”做区分，可拼读音节，部分幼儿拼读时偶尔卡顿，有待加强。", "advice": "在家可以操作玩教具《拼音对对碰》里面的声母牌，提升单独声母熟练度", "aids": ["《拼音对对碰》教具"], "flashcards": ["y (大y)", "w (大w)", "i (小i)", "u (小u)", "yi", "wu", "yu"]}, {"id": "2026-10-w2-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《伞》", "mastery": "幼儿能流利完整朗读儿歌，认读松树、荷叶、蘑菇、游戏、美丽、漂亮等词语，朗读有停顿、语气好听。", "advice": "词语小游戏：把6个词做成小卡片，玩抽卡认读；读到词语时，可以和孩子聊一聊：松树、荷叶、蘑菇长什么样子，加深理解。", "aids": ["自制词语小卡"], "flashcards": ["松树", "荷叶", "蘑菇", "游戏", "美丽", "漂亮"]}, {"id": "2026-10-w2-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“平捺”，书写汉字“还 边 过”", "mastery": "幼儿书写双姿进步较大，能写出“平捺”轮廓，有轻重意识；偶尔捺脚顿笔不足、出锋不够尖，需要少量提醒。", "advice": "简单控笔小游戏：在空中用手指比划平捺，边画边念口诀，熟悉笔画形态，减少写字压力。", "aids": ["田字格本", "铅笔"], "flashcards": ["平捺 (㇏ 走之底)", "还", "边", "过"]}, {"id": "2026-10-w2-lang-char", "category": "语言素养", "subject": "识字", "content": "1.学习《伞》《春晓》中学到的识字\n2.学习多音字“处”和“少”", "mastery": "幼儿汉字能够进行认读，个别字（游、处）需要小提示；幼儿可以给认识的字组简单词语，并尝试造句，整体语言表达能力有所进步。", "advice": "生活识字：出门路上看到相关词语，随时指认：比如下雨、太阳，把汉字和生活画面结合，要多鼓励幼儿，重点区分容易记混的字。", "aids": ["识字卡"], "flashcards": ["伞", "松", "游", "戏", "风", "雨", "花", "处 (chù/chǔ)", "少 (shǎo/shào)"]}, {"id": "2026-10-w2-lang-book", "category": "语言素养", "subject": "绘本", "content": "《驴小弟变石头》", "mastery": "大部分幼儿能复述故事主要情节，可以回答关键问题：魔法石有什么本领？驴小弟为什么变成石头？最后怎么变回来的？理解绘本主题，懂得家人的爱很珍贵。", "advice": "在家可以问问孩子：驴小弟变成石头的时候，心情怎么样？爸爸妈妈终于找到他的时候心情怎么样？感受亲情的力量。", "aids": []}, {"id": "2026-10-w2-lang-game", "category": "语言素养", "subject": "游戏", "content": "《识字对对碰》", "mastery": "幼儿可以掌握游戏的基础玩法。", "advice": "在家可以操作玩教具《识字对对碰》", "aids": ["《识字对对碰》教具"]}, {"id": "2026-10-w2-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《春晓》", "mastery": "幼儿能够独立背诵古诗，并且理解古诗的基础意思。", "advice": "趣味小提问：\n①这首诗写的是哪个季节什么时候的景色？（春天的早晨）\n②诗人醒来听到了什么？\n③夜里发生了什么，花儿会怎么样", "aids": [], "flashcards": ["《春晓》 唐·孟浩然", "春眠不觉晓，", "处处闻啼鸟。", "夜来风雨声，", "花落知多少。"]}, {"id": "2026-10-w2-think-comp", "category": "思维课程", "subject": "综合", "content": "七巧板拼图", "mastery": "大部分幼儿能够完成课堂任务", "advice": "在家，爸爸妈妈可以和孩子进行七巧板小游戏，互相比赛拼搭我们课堂上学过的图形。比赛不是为了分出输赢，而是在互动中，让孩子主动回忆图形组合方式，提升空间想象力。", "aids": ["七巧板"], "widgets": {"timer": true}, "diagram": {"key": "tangram_7_b", "width": 135, "height": 91, "caption": "七巧板课堂拼图造型参考"}}, {"id": "2026-10-w2-think-space", "category": "思维课程", "subject": "空间", "content": "1.学习D公式：\n按上游下游上勾下踢上勾下拳 下按上回\n2.三阶魔方还原训练。\n3.学习二阶魔方还原\n第1步还原白色面\n第2步还原黄色面\n第3步还原侧面", "mastery": "本周幼儿重点学习二阶魔方整体还原的技巧，能够独立完成魔方黄面和白面，部分同学能够迁移探索整体还原，同时进行三阶魔方的还原训练，所有同学能完成独立还原三阶魔方。", "advice": "练习要求：每日练习所学魔方各1次，录视频打卡发群内。", "aids": ["二阶魔方", "三阶魔方"], "widgets": {"counter": {"target": 5, "unit": "次", "label": "二阶+三阶魔方每日还原打卡"}, "timer": true}, "flashcards": ["二阶第1步：还原白色面", "二阶第2步：还原黄色面", "二阶第3步：还原侧面", "D公式：按上游下游 上勾下踢 上勾下拳 下按上回"]}, {"id": "2026-10-w2-english", "category": "英语", "subject": "英语", "content": "单词：smart, kind, polite, funny, strong\n句子：She is smart and polite. He is strong and kind.\n律动：《row row row your boat》\n自我介绍：I love my family.\n绘本：《My clothes are too small》", "mastery": "大部分幼儿能指读单词和句子", "advice": "点开直达链接，跟读单词与句型", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：smart / kind / polite / funny / strong", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKbaawvOHtVYx97r%2Bs7T6%2F889CxFsep4POgukiL%2BPwOsOK9JFMBeyIa%2BqsND%2BgazqHnDgV84GZQ%2B92dHyrYbMjqJ"}], "flashcards": ["smart", "kind", "polite", "funny", "strong", "She is smart and polite.", "He is strong and kind."]}, {"id": "2026-10-w2-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习 以及跳绳游戏\n感统体智能训练", "mastery": "大部分幼儿可以完成", "advice": "休息时进行适当的体育训练", "aids": ["篮球/拍球", "跳绳"]}, {"id": "2026-10-w2-chess", "category": "国际象棋", "subject": "国际象棋", "content": "国际象棋\n复习王的走法及吃子知识重点\n1、复习摆棋和棋子车、象、后的走法及吃子。\n2、学习棋子王的走法及吃子，王同后，每个方向都可以走，但每次只能走一格。\n3、形容王走棋是“米”号，王是小米。", "mastery": "幼儿可以掌握基础的下棋规则，熟练度需继续加强", "advice": "对弈练习：\n王的走法与后相似，横竖斜行均可，但每步只能走一格。王不能送给对方吃，王的走法可以概括为四句口诀：国王不住紫禁城，一步一格缓缓行，六军之中最尊贵，一旦杀王定输赢。", "aids": ["国际象棋"]}, {"id": "2026-10-w2-self", "category": "自我管理", "subject": "自我管理", "content": "交通安全", "mastery": "大部分幼儿能够认识常见交通标志，知道红灯停、绿灯行、外出时愿意遵守简单的交通规则。部分幼儿容易在游戏中忘记规则，需要老师不断提醒；少数幼儿还不能分清人行道与车道，自我保护意识有待加强", "advice": "家长日常出行做好榜样，带孩子认识交通标识，过马路时引导孩子自觉遵守规则，多给孩子讲交通安全小故事，提醒孩子不在马路边追逐玩耍。", "aids": []}, {"id": "2026-10-w2-art", "category": "创意美术", "subject": "创意美术", "content": "南瓜泥塑", "mastery": "大部分幼儿能运用粘土捏出南瓜的基本造型，尝试分出南瓜瓣，动手揉、压粘土的技能有所进步。能自主搭配绿色泥泥条做瓜柄，大胆装饰画面。", "advice": "在家可以提供彩泥让幼儿自由揉捏创作，鼓励孩子观察生活里瓜果的外形特征，大胆动手塑形，多肯定孩子的作品，保护创意，锻炼手部小肌肉。", "aids": ["超轻粘土/彩泥"]}]}, {"weekId": "2026-10-w3", "title": "2026年10月第3周", "month": "10月", "isReviewWeek": false, "pdfPage": 13, "items": [{"id": "2026-10-w3-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "20以内单双数的认识\n20以内数字的书写", "mastery": "幼儿全部掌握", "advice": "可以在家玩“单双数红绿灯”的游戏，准备两张卡片：单数=红灯，双数=绿灯。\n家长说数字（1-20），孩子快速举卡片。熟练之后反过来：孩子说数字，家长举卡，可以故意出错让孩子纠正。", "aids": ["红绿两色小卡片", "田字格/日字格本"], "flashcards": ["单数(红灯)：1 3 5 7 9 11 13 15 17 19", "双数(绿灯)：2 4 6 8 10 12 14 16 18 20"]}, {"id": "2026-10-w3-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《食全十美》\n复习之前游戏规则\n当出现“赶快抢”十，直接拍铃，谁先拍到并说出“赶快抢”，谁就拿走桌面上所有的牌。\n当出现“连加”时，必须使用三张以上包括三张牌来计算得到10，谁先拍铃并说对，将说出的数字牌和“连加”牌一起拿走，做为积分牌。", "mastery": "幼儿全部掌握", "advice": "大朋友和小朋友可以在家一起玩《食全十美》，小朋友做为小老师来给大朋友们讲解游戏规则，大朋友在游戏之中感受小朋友计算速度和观察能力的变化，及时给出表扬。", "aids": ["《食全十美》卡牌"]}, {"id": "2026-10-w3-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1.正确认读复韵母ai、ei、ui 和它们的四声，读准音，认清形。\n2.了解复韵母的标调规则。\n3.正确拼读声母和 ai、ei、ui组成的音节。", "mastery": "大部分幼儿能认清形、读准音，会和声母拼读两拼音节；部分幼儿区分ei、ui容易混淆，拼读速度偏慢，还需要多加练习巩固。", "advice": "口型区分练习：\nai（嘴巴张大）、ei（嘴角向两边拉开）、ui（嘴先圆再收），家长可以做口型，让孩子猜韵母，也可以家长读，孩子模仿口型，重点分清容易弄混的ei、ui。", "aids": ["拼音卡片(ai/ei/ui)"], "flashcards": ["ai (āi ái ǎi ài)", "ei (ēi éi ěi èi)", "ui (uī uí uǐ uì)", "标调歌：有a不放过，没a找o e，i u并列标在后"]}, {"id": "2026-10-w3-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《日春夏》", "mastery": "大部分幼儿能流利诵读、背诵“日春夏”，知道一年分为四季，并能简单说出四季的特点等。", "advice": "亲子接龙朗读，结合生活认识东南西北方向、认识金木水火土，简单讲解仁义礼智信，边读边理解，培养国学语感。", "aids": [], "flashcards": ["日春夏，日秋冬。此四时，运不穷。", "日南北，日西东。此四方，应乎中。", "日水火，木金土。此五行，本乎数。"]}, {"id": "2026-10-w3-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“右点”，书写汉字“六 头 去”", "mastery": "幼儿认识右点笔画，初步掌握轻起笔、右下按收笔的书写方法，可在田字格书写；少数幼儿行笔轻重控制不足，需继续练习。", "advice": "在家可以和宝贝随手练一练右点，提醒宝贝一次写好，体会轻轻重收，短时练习，保持兴趣。", "aids": ["田字格本", "铅笔"], "flashcards": ["右点 (丶 轻起笔右下按)", "六", "头", "去"]}, {"id": "2026-10-w3-lang-char", "category": "语言素养", "subject": "识字", "content": "学习《九月九日忆山东兄弟》《日春夏》中学到的识字。", "mastery": "大部分宝贝可以准确认读所学的生字，能分清春夏秋冬四季；个别小朋友识字还不太熟练，家长在家可以和宝贝玩识字小游戏，多多读一读哦。", "advice": "寻找生活里的字：\n路过招牌、绘本标题的时候，找一找有没有今天学的字，看到了一起指出来读一读。", "aids": ["识字卡"], "flashcards": ["异", "每", "节", "兄", "佳", "春", "夏", "秋", "冬"]}, {"id": "2026-10-w3-lang-game", "category": "语言素养", "subject": "游戏", "content": "《识字对对碰》", "mastery": "幼儿可以掌握游戏的基础玩法。", "advice": "在家可以操作玩教具《识字对对碰》", "aids": ["《识字对对碰》教具"]}, {"id": "2026-10-w3-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《九月九日忆山东兄弟》", "mastery": "大部分幼儿能够流利诵读、背诵古诗，知道这首诗是重阳节古诗，理解诗人独自在外思念亲人的情感，了解登高、插茱萸的重阳习俗。", "advice": "亲子接龙诵读，结合重阳节习俗给孩子讲解诗意，感受思念亲人的情感，培养古诗语感。", "aids": [], "flashcards": ["《九月九日忆山东兄弟》 唐·王维", "独在异乡为异客，", "每逢佳节倍思亲。", "遥知兄弟登高处，", "遍插茱萸少一人。"]}, {"id": "2026-10-w3-think-comp", "category": "思维课程", "subject": "综合", "content": "四巧板拼图", "mastery": "大部分幼儿能够完成课堂任务", "advice": "四巧板是经典益智拼板。\n亲子共同探索图形拆分与组合。\n在拼搭过程中发展观察力、逻辑思维与手眼协调。在轻松的家庭游戏中，让孩子感受几何乐趣，享受高质量陪伴。", "aids": ["四巧板"], "widgets": {"timer": true}, "diagram": {"key": "tangram_4", "width": 154, "height": 135, "caption": "四巧板课堂拼图造型参考"}}, {"id": "2026-10-w3-think-space", "category": "思维课程", "subject": "空间", "content": "1.学习二阶魔方还原方法。\n2.学习二阶魔方及三阶魔方转角解决方法。\n3.复习巩固金字塔魔方。", "mastery": "本周大部分幼儿均基本掌握了二阶魔方的还原技巧。", "advice": "练习要求：每日练习三阶、二阶、金字塔魔方各1次，录视频打卡发群内。", "aids": ["二阶魔方", "三阶魔方", "金字塔魔方"], "widgets": {"counter": {"target": 3, "unit": "颗", "label": "三阶+二阶+金字塔每日各1次"}, "timer": true}}, {"id": "2026-10-w3-english", "category": "英语", "subject": "英语", "content": "单词：smart, kind, polite, funny, strong\n句子：She is smart and polite. He is strong and kind.\n律动：《row row row your boat》\n自我介绍：I love my family.\n绘本：《My clothes are too small》", "mastery": "大部分幼儿能指读单词和句子", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：smart / kind / polite / funny / strong", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKbaawvOHtVYx97r%2Bs7T6%2F889CxFsep4POgukiL%2BPwOsOK9JFMBeyIa%2BqsND%2BgazqHnDgV84GZQ%2B92dHyrYbMjqJ"}]}, {"id": "2026-10-w3-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习 以及跳绳游戏\n感统体智能训练", "mastery": "大部分幼儿可以完成", "advice": "休息时进行适当的体育训练", "aids": ["篮球/拍球", "跳绳"]}, {"id": "2026-10-w3-chess", "category": "国际象棋", "subject": "国际象棋", "content": "国际象棋\n复习王的走法及吃子知识重点\n1、复习摆棋和棋子车、象、后的走法及吃子。\n2、学习棋子王的走法及吃子，王同后，每个方向都可以走，但每次只能走一格。\n3、形容王走棋是“米”号，王是小米。\n课堂练习 对弈", "mastery": "幼儿可以掌握基础的下棋规则，熟练度需继续加强", "advice": "对弈练习：\n王的走法与后相似，横竖斜行均可，但每步只能走一格。王不能送给对方吃，王的走法可以概括为四句口诀：国王不住紫禁城，一步一格缓缓行，六军之中最尊贵，一旦杀王定输赢。", "aids": ["国际象棋"]}, {"id": "2026-10-w3-self", "category": "自我管理", "subject": "自我管理", "content": "交通安全", "mastery": "大部分幼儿能够认识常见交通标志，知道红灯停、绿灯行、外出时愿意遵守简单的交通规则。", "advice": "家长日常出行做好榜样，带孩子认识交通标识，过马路时引导孩子自觉遵守规则，多给孩子讲交通安全小故事，提醒孩子不在马路边追逐玩耍。", "aids": []}, {"id": "2026-10-w3-art", "category": "创意美术", "subject": "创意美术", "content": "南瓜泥塑", "mastery": "大部分幼儿能运用粘土捏出南瓜的基本造型，尝试分出南瓜瓣，动手揉、压粘土的技能有所进步。", "advice": "在家可以提供彩泥让幼儿自由揉捏创作，鼓励孩子观察生活里瓜果的外形特征，大胆动手塑形。", "aids": ["超轻粘土/彩泥"]}]}, {"weekId": "2026-10-w4", "title": "2026年10月第4周（阶段复习）", "month": "10月", "isReviewWeek": true, "pdfPage": 14, "items": [{"id": "2026-10-w4-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "20以内不进位加法\n两位数加法", "mastery": "幼儿全部掌握", "advice": "准备：两种颜色小积木（或者玉米粒、瓶盖、小石子都行），一张白纸\n玩法：\n1. 家长先说算式，比如：13 + 5 =\n2. 让孩子拿出积木：1捆10块（代表10）+ 3块，再拿出5块\n3. 先把零散的3块和5块合在一起数一数：3+5=8，没有满10，不用凑新的十\n4. 再加上前面的10，10+8=18，说出答案\n5. 孩子摆好之后，反过来让孩子出算式，家长来摆积木，互换角色", "aids": ["两种颜色小积木/小石子(20颗)", "白纸"], "flashcards": ["13 + 5 = 18", "12 + 6 = 18", "11 + 8 = 19", "14 + 3 = 17"]}, {"id": "2026-10-w4-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《格米凑十》\n学习游戏规则：翻开放大镜牌后观察数字，凑不成10的数字为“小偷”，哪个数字为“小偷”，拍哪个数字，谁先拍到谁拿走这张牌。\n全部凑成10，则拍格米警察，谁先拍到，谁拿走这张牌。", "mastery": "幼儿全部掌握", "advice": "在家进行亲子游戏，小朋友做为小老师讲解游戏规则，在游戏中体会计算速度，反应能力和表达能力", "aids": ["《格米凑十》卡牌"]}, {"id": "2026-10-w4-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1.进行声母书写练习\n2.复习复韵母的标调规则\n3.复习学过的单韵母和复韵母", "mastery": "大部分幼儿能够进行全部声母的背诵并且能够默写声母，整体掌握情况较好。", "advice": "听音辨音练习：\n平时生活里多玩听音小游戏，家长读声母，孩子快速指认。容易混淆的重点多练：b/d、p/q、zh/z、ch/c、sh/s，可以结合简单词语，比如b（菠萝卜）、d（大树），把声母和字音绑定。", "aids": ["拼音卡片", "四线三格本"], "flashcards": ["易混对比：b vs d", "易混对比：p vs q", "平翘对比：z vs zh", "平翘对比：c vs ch", "平翘对比：s vs sh"]}, {"id": "2026-10-w4-lang-song", "category": "语言素养", "subject": "儿歌", "content": "学习儿歌《节约》", "mastery": "大部分幼儿能流利诵读、背诵“节约”，能够了解到节约的重要性，并且表达出自己以后应该如何做。", "advice": "生活中可以给孩子设置节约小岗位：负责出门检查关灯、吃饭自己控制饭量。做到了及时肯定，慢慢养成好习惯。", "aids": []}, {"id": "2026-10-w4-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“左点”，生字“小 少 东”", "mastery": "幼儿认识左点笔画，初步掌握轻起笔、左下按收笔的书写方法，可在田字格书写；少数幼儿行笔轻重控制不足，需继续练习。", "advice": "少量练习，重在感受：\n不用写很多，先单独练左点，再带入生字书写，写完对比看一看，方向对不对。每天写几行就可以，保护书写兴趣。", "aids": ["田字格本", "铅笔"], "flashcards": ["左点 (丶 轻起笔左下按)", "小", "少", "东"]}, {"id": "2026-10-w4-lang-char", "category": "语言素养", "subject": "识字", "content": "1.学习汉字“手 关 点 个 贝”\n2.复习本月学过的汉字：伞 怕 游 阳 处 风 雨 花 少 春 夏 秋 冬 异 每 节 兄 佳 手 关 点 个 贝", "mastery": "大部分宝贝可以准确认读所学的生字，并且了解汉字的意思进行组词练习。", "advice": "分层复习，反复巩固：\n刚学的生字每天读一遍，前几天学过的定期抽查，混在一起能准确读出来就达标。\n容易认错的字（形近字、同音字）单独挑出来，对比着看一看、说一说差别，每天10分钟左右，少量多次，保护孩子兴趣。", "aids": ["识字卡"], "flashcards": ["手", "关", "点", "个", "贝", "伞", "怕", "游", "阳", "处", "风", "雨", "花", "少", "春", "夏", "秋", "冬", "异", "每", "节", "兄", "佳"]}, {"id": "2026-10-w4-lang-game", "category": "语言素养", "subject": "游戏", "content": "《优尔识字翻翻卡》", "mastery": "幼儿可以掌握游戏的基础玩法。", "advice": "在家可以进行识字翻翻卡的练习，不熟悉的字词拼音家长朋友们可以带着小朋友们进行点读学习，增加熟练度哦。", "aids": ["《优尔识字翻翻卡》"]}, {"id": "2026-10-w4-lang-poem", "category": "语言素养", "subject": "古诗", "content": "复习古诗《春晓》《九月九日忆山东兄弟》", "mastery": "大部分幼儿能够流利诵读、背诵古诗，理解诗的含义", "advice": "读完之后和孩子简单聊一聊：\n《春晓》：春天早上听到了什么？地上落的是什么花？\n《九月九日忆山东兄弟》：重阳节有什么习俗？诗人想念谁？\n用问答的方式激发思考，记得更牢固。", "aids": []}, {"id": "2026-10-w4-think-comp", "category": "思维课程", "subject": "综合", "content": "学习五巧板", "mastery": "大部分幼儿已经掌握", "advice": "课后亲子任务：玩转五巧板\n和孩子合作拼搭，自由创作，感受图形之美。小小的板块，藏着大大的想象力，快来试一试！", "aids": ["五巧板"], "widgets": {"timer": true}, "diagram": {"key": "tangram_5", "width": 142, "height": 113, "caption": "五巧板课堂拼图造型参考"}}, {"id": "2026-10-w4-think-space", "category": "思维课程", "subject": "空间", "content": "1.梳理巩固三阶魔方、二阶魔方、金字塔魔方还原技巧\n2.学习二阶魔方快速观察技巧。\n3.复习巩固金字塔魔方。", "mastery": "本周全部幼儿均完全掌握了三款魔方的还原技巧，能独立完成魔方打乱及还原。", "advice": "练习要求：每日练习三阶、二阶、金字塔魔方各1次，录视频打卡发群内。", "aids": ["三阶魔方", "二阶魔方", "金字塔魔方"], "widgets": {"counter": {"target": 3, "unit": "颗", "label": "三阶+二阶+金字塔每日各1次"}, "timer": true}}, {"id": "2026-10-w4-english", "category": "英语", "subject": "英语", "content": "单词（复习）：fat, thin, tall, short, mirror, smart, kind, polite, funny, strong, bedroom, bathroom, kitchen, garden, dining room\n句子（复习）：I'm big and fat. / He's smart and polite. / Where is she? She's in the garden.\n自然拼读字母：Ii\n律动：《trick or treat》\n自我介绍：I love English.\n绘本：《My clothes are too small》", "mastery": "大部分幼儿能指读单词和句子。", "advice": "点开下方2个直达链接，复习10月全部单词与句型", "aids": [], "links": [{"label": "🎬 跟读1：fat / thin / tall / short / mirror", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKaplkuUyPud65Xqtg3sf%2BtVppZAca9%2FlDLM97XPzNI%2F68p1UUODzcmP1u7uTyzcRSDJ7GcyN5HRi5m8akItGhWm"}, {"label": "🎬 跟读2：smart / kind / polite / funny / strong", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKbaawvOHtVYx97r%2Bs7T6%2F889CxFsep4POgukiL%2BPwOsOK9JFMBeyIa%2BqsND%2BgazqHnDgV84GZQ%2B92dHyrYbMjqJ"}], "flashcards": ["fat", "thin", "tall", "short", "mirror", "smart", "kind", "polite", "funny", "strong", "bedroom", "bathroom", "kitchen", "garden", "dining room", "Ii"]}, {"id": "2026-10-w4-pe", "category": "体能", "subject": "体能", "content": "篮球双手、单手拍球学习", "mastery": "大部分幼儿可以完成", "advice": "坚持拍球体能练习。", "aids": ["篮球/拍球"]}, {"id": "2026-10-w4-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习马的走法，课程对弈", "mastery": "可以对弈", "advice": "家中对弈，前期可以先不用国王（重点练习马走“日”字与跨子）。", "aids": ["国际象棋"]}, {"id": "2026-10-w4-self", "category": "自我管理", "subject": "自我管理", "content": "节约能源", "mastery": "知道浪费水、电会污染环境。", "advice": "家长日常生活做好榜样，和孩子一起随手关灯、拧紧水龙头，外出的时候和孩子观察天气，遇到雾霾天做好防护。", "aids": []}, {"id": "2026-10-w4-art", "category": "创意美术", "subject": "创意美术", "content": "糖炒栗子", "mastery": "大部分幼儿能够独立揉出圆形黏土，压出栗子外壳，尝试粘贴黄色部分做出栗子裂口。", "advice": "在家可以和孩子一起观察真实栗子，看一看外壳纹理，继续提供黏土材料，鼓励孩子尝试制作其他秋季食材。", "aids": ["超轻粘土/彩泥"]}, {"id": "2026-10-w4-fencing", "category": "击剑", "subject": "击剑", "content": "1.基本功：集体步伐，直刺，弓步刺\n2.握剑练习：转移刺，防守刺\n3.灵活性：开合跳，交叉跳", "mastery": "训练目标：\n稳固基本功，进攻动作，集体步伐移动锻炼反应力，提高腿部力量和动作感觉。\n提高握剑手腕力量，锻炼灵活进攻和防守意识，在进攻时适应控制剑尖刺人的感觉。\n锻炼提高孩子脚下节奏和灵活性。", "advice": "在家可练习开合跳、交叉跳与弓步姿势。", "aids": []}]}, {"weekId": "2026-11-w1", "title": "2026年11月第1周", "month": "11月", "isReviewWeek": false, "pdfPage": 15, "items": [{"id": "2026-11-w1-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "20以内不进位加法\n两位数加法", "mastery": "幼儿全部掌握", "advice": "准备：两种颜色小积木（或者玉米粒、瓶盖、小石子都行），一张白纸\n玩法：\n1. 家长先说算式，比如：13 + 5 =\n2. 让孩子拿出积木：1捆10块（代表10）+ 3块，再拿出5块\n3. 先把零散的3块和5块合在一起数一数：3+5=8，没有满10，不用凑新的十\n4. 再加上前面的10：10+8=18，说出答案\n5. 孩子摆好之后，反过来让孩子出算式，家长来摆积木，互换角色", "aids": ["两种颜色小积木/小石子(20颗)", "白纸"]}, {"id": "2026-11-w1-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《格米凑十》\n学习游戏规则：翻开放大镜牌后观察数字，凑不成10的数字为“小偷”，哪个数字为“小偷”，拍哪个数字，谁先拍到谁拿走这张牌。\n全部凑成10，则拍格米警察，谁先拍到，谁拿走这张牌", "mastery": "幼儿全部掌握", "advice": "在家进行亲子游戏，小朋友充当小老师讲解游戏规则，在游戏中体会计算速度，反应能力和表达能力", "aids": ["《格米凑十》卡牌"]}, {"id": "2026-11-w1-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1.正确认读复韵母ao ou iu 和它们的四声，读准音，认清形。\n2.正确拼读声母和ao ou iu 组成的音节。", "mastery": "大部分幼儿能认读复韵母ao、ou、iu，听清发音区别，尝试拼读简单声母和ao、ou、iu组成的音节；少数幼儿容易混淆ou和iu的读音，拼读时反应稍慢，还需要多多练习巩固。", "advice": "平时可以和宝贝玩发音小游戏，比如模仿小猫ào、小狗ǒu、小牛niú，一边模仿一边读出韵母，感受ao、ou、iu的发音差别；路上看到相关事物随口拼读音节。", "aids": ["拼音卡片(ao/ou/iu)"], "flashcards": ["ao (āo áo ǎo ào)", "ou (ōu óu ǒu òu)", "iu (iū iú iǔ iù)", "m-āo → māo", "g-ǒu → gǒu", "n-iú → niú"]}, {"id": "2026-11-w1-lang-song", "category": "语言素养", "subject": "儿歌", "content": "学习儿歌《大鸭梨》", "mastery": "大部分幼儿能够流利朗读儿歌《大鸭梨》，认识儿歌里描写鸭梨外形、味道的词句，理解“黄澄澄、水汪汪”这些词语。", "advice": "一起找一找生活里ABB词语：黄澄澄、水汪汪，还可以说一说红彤彤、绿油油，拓展积累。", "aids": [], "flashcards": ["黄澄澄", "水汪汪", "红彤彤", "绿油油", "白胖胖"]}, {"id": "2026-11-w1-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“提”，生字“虫、打、拉”", "mastery": "大部分幼儿认识笔画名称，初步掌握由重到轻、向右上轻轻出锋的书写方法，可在田字格尝试书写；少数幼儿行笔力度、角度把控不稳，提画容易写平或者收笔过重，还需要继续练习巩固。", "advice": "桌面小游戏：\n用手指在桌面、沙发上画“提画”，一边画一边念口诀：轻轻笔、向上挑。", "aids": ["田字格本", "铅笔"], "flashcards": ["提画 (㇀ 重起笔右上挑)", "虫", "打", "拉"]}, {"id": "2026-11-w1-lang-char", "category": "语言素养", "subject": "识字", "content": "学习汉字：“池、采、莲、开、偷、鸭、果、黄、肉、糖”", "mastery": "大部分宝贝可以准确认读所学的生字，并且了解汉字的意思进行组词练习。", "advice": "游戏：我说你指\n摆上写下学过的汉字，家长念出汉字名称，孩子快速用手指指出来。", "aids": ["识字卡"], "flashcards": ["池", "采", "莲", "开", "偷", "鸭", "果", "黄", "肉", "糖"]}, {"id": "2026-11-w1-lang-game", "category": "语言素养", "subject": "游戏", "content": "《古诗华容道》", "mastery": "大部分幼儿初步认识古诗华容道教具，熟悉棋盘与字块，能认读诗句汉字并尝试归位；少数幼儿汉字识记不够熟练，摆放需要提示，继续多加练习。", "advice": "在家里可以操作教具《古诗华容道》", "aids": ["《古诗华容道》教具"], "widgets": {"timer": true}}, {"id": "2026-11-w1-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《池上》", "mastery": "大部分幼儿能够流利诵读、背诵古诗，理解诗句的含义。", "advice": "情景模仿：\n和宝贝一起扮演小娃：双手假装撑小船，做采白莲、划小船的动作，边玩边念古诗，感受诗句画面。", "aids": [], "flashcards": ["《池上》 唐·白居易", "小娃撑小艇，", "偷采白莲回。", "不解藏踪迹，", "浮萍一道开。"]}, {"id": "2026-11-w1-think-comp", "category": "思维课程", "subject": "综合", "content": "学习数字华容道（3×3）", "mastery": "大部分幼儿能够独立完成3×3数字的归位", "advice": "亲爱的大朋友、小朋友们：\n我们学习了数字华容道，回家可以和宝贝一起玩起来啦！\n玩法小提示：\n目标：把打乱的数字，按顺序整齐排好\n小规则：只能移动空格旁边的数字块，不能拿起来硬摆\n亲子玩法建议：\n· 家长和宝贝比赛，看谁更快归位\n· 慢一点引导，鼓励孩子自己观察、试错\n不追求速度，重点锻炼专注力、逻辑思维！\n一次次滑动中，锻炼耐心与思考力，快来一起挑战吧~", "aids": ["数字华容道(3×3)"], "widgets": {"timer": true}}, {"id": "2026-11-w1-think-space", "category": "思维课程", "subject": "空间", "content": "1.梳理巩固三阶魔方、二阶魔方、金字塔魔方还原技巧\n2.了解223魔方及异形魔方知识。\n3.学习223魔方还原手法。", "mastery": "本周大部分幼儿均完全掌握了223魔方还原手法。", "advice": "练习要求：每日练习三阶、二阶、金字塔魔方各1次，录视频打卡发群内。", "aids": ["223魔方", "三阶魔方", "二阶魔方", "金字塔魔方"], "widgets": {"counter": {"target": 3, "unit": "颗", "label": "三阶+二阶+金字塔每日各1次"}, "timer": true}}, {"id": "2026-11-w1-english", "category": "英语", "subject": "英语", "content": "单词：bed, fridge, sofa, stove, table\n句子：What's in the bedroom? A bed is in the bedroom.\n自然拼读字母：Jj\n律动：《the month chant》\n绘本：《Moms do so much》", "mastery": "大部分幼儿能指读单词和句子。", "advice": "点开直达链接，跟读该单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：bed / fridge / sofa / stove / table", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKbY4NlduZrf4rKMViZ1mB3Kv0FbBUfe8WkHNuC8hec5QQ17HqrNP1FCbOa7H5nUqoNWYMF6S9VCY2MhhwvBnHxR"}], "flashcards": ["bed", "fridge", "sofa", "stove", "table", "Jj", "What's in the bedroom? A bed is in the bedroom."]}, {"id": "2026-11-w1-pe", "category": "体能", "subject": "体能", "content": "认识跳绳，握绳，摇绳，踩绳，衔接跳！", "mastery": "大部分幼儿可以不断尝试完成", "advice": "在家也可以多练习呦！", "aids": ["跳绳"]}, {"id": "2026-11-w1-chess", "category": "国际象棋", "subject": "国际象棋", "content": "学习兵的走法以及吃子，兵在原始格时棋第一步可以向前走两格或者一格，吃子只能吃斜前方的棋子。", "mastery": "可以对弈", "advice": "家中对弈，前期可以先不用国王（重点练习小兵直走斜吃）。", "aids": ["国际象棋"]}, {"id": "2026-11-w1-self", "category": "自我管理", "subject": "自我管理", "content": "主动学习", "mastery": "大部分幼儿可以理解学习不只局限在上课，明白生活处处都可以学习，懂得“今日事今日毕”", "advice": "在家为孩子建立规律的作息，给孩子安排力所能及的小任务，鼓励孩子独立完成，家长尽量不包办代替。", "aids": []}, {"id": "2026-11-w1-art", "category": "创意美术", "subject": "创意美术", "content": "冬日温暖的手套", "mastery": "操作的过程中应用了剪刀和彩纸，孩子们能够完成课堂任务，并且知道使用剪刀的相关安全问题。", "advice": "课后亲子小手工时间：\n宝贝们，在家可以和爸爸妈妈一起做手工啦！\n动动小手，剪一剪、贴一贴、折一折，发挥想象力，创造属于自己的小作品，在制作中锻炼手部精细动作，感受创作的快乐，记得多多鼓励宝贝哦！", "aids": ["安全剪刀", "彩纸/胶棒"]}, {"id": "2026-11-w1-fencing", "category": "击剑", "subject": "击剑", "content": "1.基本功实战姿势，分组步伐移动\n2.握剑练习：弓步刺，防守刺\n3.立定跳远", "mastery": "训练目标：\n1.基本功锻炼腿部力量，移动时提高步伐的连贯感，在连续移动中控制好重心。\n2.稳固握剑手腕力量，提高攻防意识，加强进攻和防守动作。\n3.立定跳远提升孩子腿部力量和爆发力。", "advice": "在家可和孩子比一比立定跳远与实战步伐移动。", "aids": []}]}, {"weekId": "2026-11-w2", "title": "2026年11月第2周", "month": "11月", "isReviewWeek": false, "pdfPage": 16, "items": [{"id": "2026-11-w2-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "20以内不退位减法\n两位数减法\n有关 0 的加法和减法", "mastery": "大部分幼儿能理解减法含义，会列竖式计算，掌握 0 的加减规律；少数幼儿容易数位对不齐、加减混淆，需要多加巩固。", "advice": "1. 生活里练口算：分水果、分零食的时候随口出题，比如 16-3、12-2、15-5，不用刻意刷题，在游戏中练习。\n2. 借助实物理解 0：比如盘子里有 4 颗糖，全部拿走，4-4=0；盒子原本是空的，放 2 颗糖，0+2=2，帮孩子看懂 0 代表“没有”。", "aids": ["水果/糖果小道具"], "flashcards": ["16 - 3 = 13", "12 - 2 = 10", "15 - 5 = 10", "4 - 4 = 0", "0 + 2 = 2"]}, {"id": "2026-11-w2-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《格米凑十》\n学习游戏规则：翻开放大镜牌后观察数字，凑不成10的数字为“小偷”，哪个数字为“小偷”，拍哪个数字，谁先拍到谁拿走这张牌。\n全部凑成10，则拍格米警察，谁先拍到，谁拿走这张牌", "mastery": "幼儿全部掌握", "advice": "在家进行亲子游戏，小朋友充当小老师讲解游戏规则，在游戏中体会计算速度，反应能力和表达能力", "aids": ["《格米凑十》卡牌"]}, {"id": "2026-11-w2-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 学习复韵母ie、üe，特殊韵母er的认读和书写\n2️⃣ 练习声母和复韵母的拼读", "mastery": "大部分幼儿能够认读复韵母ie、üe，知道er是特殊韵母，不和任何声母相拼，并且尝试拼读简单声母和复韵母组成的音节；少数幼儿容易混淆ei和ie的读音，还需要继续练习巩固。", "advice": "练习ie、üe和声母的拼读（如bie、die、nüe、lüe），er不拼声母，直接认读音节（er、ér、ěr、èr）。\n不用一次练很久，每次5-10分钟就好；拼读时可以指着音节读，先慢后快。", "aids": ["拼音卡片(ie/üe/er)"], "flashcards": ["ie (iē ié iě iè)", "üe (üē üé üě üè)", "er (特殊韵母，自成音节：ēr ér ěr èr)", "b-ie → bie", "d-ie → die", "n-üe → nüe", "l-üe → lüe"]}, {"id": "2026-11-w2-lang-story", "category": "语言素养", "subject": "故事", "content": "《增广贤文》节选", "mastery": "大部分幼儿能准确分清3个自然段，诵读流畅、字音准确。幼儿可以懂得用心读书、勤劳和睦、珍惜时间的道理，愿意主动分享自己的理解。", "advice": "结合日常和孩子聊句意，引导幼儿能够更好的珍惜时间、做事用心、勤劳和睦。", "aids": []}, {"id": "2026-11-w2-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“横折”，书写汉字“口 日 中”", "mastery": "大部分幼儿认识竖折笔画，初步掌握书写方法，可在田字格尝试书写；少数幼儿行笔力度、角度把控不稳，会写出“尖角”或者“圆角”，后续可继续加强练习。", "advice": "幼儿回家可以先书空熟悉路线，少量书写，重点练习转笔顿折，不追求写很多。练习时留意坐姿握笔，搭配生字（口、日）巩固，及时纠正歪斜问题。", "aids": ["田字格本", "铅笔"], "flashcards": ["横折 (𠃍 转角顿笔)", "口", "日", "中"]}, {"id": "2026-11-w2-lang-char", "category": "语言素养", "subject": "识字", "content": "学习《小池》《增广贤文》中的汉字：\n泉 爱 柔 尖 早 立 文 学 在 乎 金", "mastery": "大部分宝贝可以准确认读所学的生字，并且了解汉字的意思进行组词练习。", "advice": "在家练习时可以结合画面、词语认字，不要孤立记生字，理解意思更容易记住。少量多次复习，用闪卡、生活识字（路牌、包装）游戏巩固。", "aids": ["识字卡"], "flashcards": ["泉", "爱", "柔", "尖", "早", "立", "文", "学", "在", "乎", "金"]}, {"id": "2026-11-w2-lang-game", "category": "语言素养", "subject": "游戏", "content": "古诗华容道", "mastery": "大部分幼儿初步认识古诗华容道教具，熟悉棋盘与字块，能认读诗句汉字并尝试归位；少数幼儿汉字识记不够熟练，摆放需要提示，继续多加练习。", "advice": "在家里可以操作教具《古诗华容道》", "aids": ["《古诗华容道》教具"], "widgets": {"timer": true}}, {"id": "2026-11-w2-lang-book", "category": "语言素养", "subject": "绘本", "content": "《西红柿女孩》", "mastery": "幼儿能够熟悉绘本内容，能跟着老师回顾情节，明白米乐害羞紧张的感受，可以简单说出故事道理，但自主表达不多，需要稍加引导。", "advice": "回家后可以尝试和爸爸妈妈说一说自己害羞的时候是什么感受。", "aids": []}, {"id": "2026-11-w2-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《小池》", "mastery": "大部分幼儿能够流利诵读、背诵古诗，理解诗句的含义。", "advice": "幼儿居家可以结合图片想象画面，理解泉眼、树荫、小荷、蜻蜓的景象。多感受诗句节奏，边读边做简单动作，爸爸妈妈可以问问孩子在诗里看到了什么，锻炼表达，感受初夏美景。", "aids": [], "flashcards": ["《小池》 宋·杨万里", "泉眼无声惜细流，", "树阴照水爱晴柔。", "小荷才露尖尖角，", "早有蜻蜓立上头。"]}, {"id": "2026-11-w2-think-comp", "category": "思维课程", "subject": "综合", "content": "数字华容道4×4", "mastery": "大部分幼儿能够独立完成4×4数字的归位", "advice": "亲爱的家长、小朋友们我们已经学习了4×4的数字华容道\n目标：将数字按1-15顺序排好，右下角留空格\n规则：只能滑动数字块，不能取下调换\n💡亲子小建议：\n· 可计时比赛，增加趣味\n· 鼓励孩子自主观察、试错，卡住时一起讨论\n· 不追求速度，重在锻炼观察力、逻辑规划能力\n✨提示：4×4比3×3难度更大，多多练习，培养耐心！", "aids": ["数字华容道(4×4)"], "widgets": {"timer": true}}, {"id": "2026-11-w2-think-space", "category": "思维课程", "subject": "空间", "content": "1.学习223魔方整体还原。", "mastery": "大部分幼儿能完成223魔方整体还原", "advice": "每日练习金字塔魔方、三阶魔方还原打卡。", "aids": ["223魔方", "金字塔魔方", "三阶魔方"], "widgets": {"counter": {"target": 3, "unit": "颗", "label": "223+金字塔+三阶魔方练习"}, "timer": true}}, {"id": "2026-11-w2-english", "category": "英语", "subject": "英语", "content": "单词：cook, dishes, hair, newspaper, watch\n句子：What do you do in the kitchen? I cook in the kitchen.\n自然拼读字母：Kk\n律动：《the month chant》\n绘本：《Moms do so much》", "mastery": "大部分幼儿能准确指读单词和句子。", "advice": "点开直达链接，跟读单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：cook / dishes / hair / newspaper / watch", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKY6YY5TFo3eVSFcKKNEJp82eFV9PZTAKrs0sgiD3rUOkLsv%2BZAGzWcClwqJHIzaYZjce1bANcLnWd%2FUjdvak6Li"}], "flashcards": ["cook", "dishes", "hair", "newspaper", "watch", "Kk", "What do you do in the kitchen? I cook in the kitchen."]}, {"id": "2026-11-w2-pe", "category": "体能", "subject": "体能", "content": "教具运用：跳绳\n教学内容：改正每个人的错误动作", "mastery": "教学目标：会挽绳，身体协调性，用小臂跟手腕摇绳", "advice": "在家练习跳绳挽绳收纳与手腕摇绳动作。", "aids": ["跳绳"]}, {"id": "2026-11-w2-chess", "category": "国际象棋", "subject": "国际象棋", "content": "复习兵的走法以及棋子威力的对比\n不棋子在棋盘上一步到达的格数不同，因此棋子威力也不同，棋子的静态价值分数：\n兵：1分  象：3分  马：3分  车：5分  后：10分  王：无价之宝（决定胜负的关键），不可被交换吃掉\n课堂练习", "mastery": "大部分幼儿能够进行走子 吃子", "advice": "家中对弈练习 看情况是否加王", "aids": ["国际象棋"], "flashcards": ["兵 = 1分", "象 = 3分", "马 = 3分", "车 = 5分", "后 = 10分", "王 = 无价之宝（决定胜负）"]}, {"id": "2026-11-w2-self", "category": "自我管理", "subject": "自我管理", "content": "文明素养", "mastery": "大部分幼儿可以分清文明与不文明行为，愿意主动模仿标准坐立姿势，记住礼貌礼貌用语", "advice": "家长在家做好文明榜样，日常生活中提醒孩子保持正确姿势", "aids": []}, {"id": "2026-11-w2-art", "category": "创意美术", "subject": "创意美术", "content": "折纸雨伞", "mastery": "幼儿能够跟着步骤用折纸方法折出伞面，尝试均匀折叠，大胆选择不同颜色的彩纸制作雨伞，愿意动手粘贴、添画雨滴和伞柄。", "advice": "在家可以和孩子一起玩折纸小游戏，锻炼小手精细动作", "aids": ["彩纸", "画笔/胶棒"]}, {"id": "2026-11-w2-fencing", "category": "击剑", "subject": "击剑", "content": "1.灵活性：立定跳远\n2.基本功：步伐移动进攻，弓步刺\n3.握剑练习：防守转移刺/刺圈", "mastery": "训练目标：\n1.提高脚下灵活性和节奏感，锻炼增强腿部力量和小腿爆发力。\n2.稳固基本功，提高动作标准，锻炼移动进攻动作，增强进攻意识。\n3.提升握剑手腕力量和防守意识，防守中灵活控制剑尖进攻，提高专注力和反应力。", "advice": "在家可继续配合练习步伐移动与立定跳远。", "aids": []}]}, {"weekId": "2026-11-w3", "title": "2026年11月第3周（最新周）", "month": "11月", "isReviewWeek": false, "pdfPage": 17, "items": [{"id": "2026-11-w3-math-concept", "category": "数理逻辑", "subject": "数的概念", "content": "20以内进位加法\n20以内退位减法", "mastery": "大部分幼儿20以内进位加法掌握的不错，小部分幼儿对20以内退位减法的最后加剩数的步骤会算成减法，还需继续加强。", "advice": "可以在家进行超市游戏，在纸上写上数字，最大写到20，小朋友作为收银员来计算。\n例如：妈妈买了一根7元的香肠和一个5元的棒棒糖，妈妈一共要花多少钱？让孩子来算一算，孩子算出来后，妈妈可以给孩子20元，让小朋友来找零钱。", "aids": ["自制价格标签纸(1-20元)", "玩具钱币/纸条"], "flashcards": ["7 + 5 = 12 (凑十法)", "8 + 6 = 14", "15 - 7 = 8 (破十法：10-7+5)", "20 - 12 = 8"]}, {"id": "2026-11-w3-math-game", "category": "数理逻辑", "subject": "游戏课", "content": "《格米凑十》\n复习学过的游戏规则，获胜方式从四种不同颜色的放大镜升级为六种不同颜色的放大镜。", "mastery": "幼儿全部掌握", "advice": "在家进行亲子游戏，小朋友充当小老师讲解游戏规则，在游戏中体会计算速度，反应能力和表达能力", "aids": ["《格米凑十》卡牌"]}, {"id": "2026-11-w3-lang-pinyin", "category": "语言素养", "subject": "拼音", "content": "1️⃣ 正确认读前鼻韵母an en in 和它们的四声，读准音，认清形。\n2️⃣ 正确拼读声母和an en in 组成的音节。", "mastery": "大部分幼儿能够准确认读，分清口型变化，尝试正确发音；少数宝贝容易混淆相近韵母，拼读练习还需要多加巩固。", "advice": "听音小游戏：\n大朋友说话时说出带出an、en、in的字，\n例如：（山、门、心），让宝贝听一听哪个字带有前鼻音韵母", "aids": ["拼音卡片(an/en/in)"], "flashcards": ["an (ān án ǎn àn) → 山 shān", "en (ēn én ěn èn) → 门 mén", "in (īn ín ǐn ìn) → 心 xīn"]}, {"id": "2026-11-w3-lang-song", "category": "语言素养", "subject": "儿歌", "content": "《两只猫》", "mastery": "多数幼儿可以理解什么是顺口溜，愿意开口朗读，能分清白猫黑鼻子、黑猫白鼻子的主要情节，朗读时表现力很好。少数幼儿在读到重复、相近的句子容易混淆，拗口词句的语速和咬字还需要多多练习。", "advice": "慢读闯关：\n在家里先让宝贝慢速读准，熟练之后再慢慢加快速度。", "aids": [], "flashcards": ["白猫黑鼻子，", "黑猫白鼻子；", "黑猫的白鼻子碰破了白猫的黑鼻子..."]}, {"id": "2026-11-w3-lang-write", "category": "语言素养", "subject": "书写", "content": "学习笔画“竖折”，书写汉字“出 山 区”", "mastery": "大部分幼儿能认识竖折，掌握先竖后折的书写顺序，尝试在田字格中书写；少数宝贝转折处的顿笔、行笔控制还不够稳定，后续可以继续练习。", "advice": "在读绘本的时候，停下来找一找含有竖折的字（山、牙、巨），找到之后用手指在字上面进行书空练习。", "aids": ["田字格本", "铅笔", "绘本"], "flashcards": ["竖折 (∟ 先竖后折)", "出", "山", "区"]}, {"id": "2026-11-w3-lang-char", "category": "语言素养", "subject": "识字", "content": "学习《鹿柴》《两只猫》中的汉字：\n黑 扑 鼻 破 痛 空 但 闻 响 照", "mastery": "大部分宝贝可以准确认读所学的生字，并且了解汉字的意思进行组词练习。", "advice": "家长说出汉字，宝贝在绘本中快速找出这个字；反过来也可以，宝贝指字，家长认读。", "aids": ["识字卡", "绘本"], "flashcards": ["黑", "扑", "鼻", "破", "痛", "空", "但", "闻", "响", "照"]}, {"id": "2026-11-w3-lang-game", "category": "语言素养", "subject": "游戏", "content": "古诗华容道", "mastery": "大部分幼儿初步认识古诗华容道教具，熟悉棋盘与字块，能认读诗句汉字并尝试归位；少数幼儿汉字识记不够熟练，摆放需要提示，继续多加练习。", "advice": "在家里可以操作教具《古诗华容道》", "aids": ["《古诗华容道》教具"], "widgets": {"timer": true}}, {"id": "2026-11-w3-lang-poem", "category": "语言素养", "subject": "古诗", "content": "《鹿柴》", "mastery": "大部分幼儿能够流利诵读、背诵古诗，理解诗句的含义。", "advice": "听声音寻人大挑战：\n家长躲在房间门后，不要露出身体，只轻轻说话，让宝贝靠耳朵听声音找到人。\n👉游戏后简单聊聊：就像诗里的山林，看不见人，却能听见声音，感受诗句意境。", "aids": [], "flashcards": ["《鹿柴》 唐·王维", "空山不见人，", "但闻人语响。", "返景入深林，", "复照青苔上。"]}, {"id": "2026-11-w3-think-comp", "category": "思维课程", "subject": "综合", "content": "复习数字华容道（4×4）", "mastery": "大部分幼儿能够完成1-15数字的归位", "advice": "数字华容道练习小提示：\n宝贝练习的时候，提醒先仔细观察盘面，动脑思考，找到数字块最快归位的方法，不着急挪动，耐心规划路线。", "aids": ["数字华容道(4×4)"], "widgets": {"timer": true}}, {"id": "2026-11-w3-think-space", "category": "思维课程", "subject": "空间", "content": "1.学习223魔方完整还原。\n第一步还原黄白面\n第二步还原上下层\n第三步还原中间层\n2.学习魔方克隆-复制魔方单面色块。\n准备两个三阶魔方随机打乱一个，用另一个魔方克隆复制一面的九个色块颜色。", "mastery": "幼儿均能完成223魔方还原；\n大部分幼儿能完成魔方克隆。", "advice": "练习三阶魔方与金字塔魔方。", "aids": ["223魔方", "三阶魔方(2颗，可玩克隆)", "金字塔魔方"], "widgets": {"counter": {"target": 3, "unit": "次", "label": "223+三阶+金字塔魔方练习"}, "timer": true}, "flashcards": ["223魔方第1步：还原黄白面", "223魔方第2步：还原上下层", "223魔方第3步：还原中间层", "魔方克隆：用第2颗三阶魔方复制第1颗单面9个色块"]}, {"id": "2026-11-w3-english", "category": "英语", "subject": "英语", "content": "单词：floor, toilet, shower, clean, dirty\n句子：Do you want to clean the toilet? Yes./No.\n自然拼读字母：Ll\n自我介绍：My favorite color is......\n律动：《Seasons》\n绘本：《Moms do so much》", "mastery": "大部分幼儿能指读单词和句子。", "advice": "点开直达链接，跟读该单词和句子", "aids": [], "links": [{"label": "🎬 爱乐奇跟读：floor / toilet / shower / clean / dirty", "url": "https://iclass-api.alo7.com/apis/i_clazzs/share/clazz_report?key=WEMBoOLDHe6Q3yabG47pJ5V4MXSxfdkkIXihg33QfKZcDbtovEG5C3Q1RPbjG02Qv9HzyrqBSvhAwYuqj5GiO5j6Ic9efCQqBaQud%2BJMvSGxV1az%2FUx6DbIbMKSwkwXf"}], "flashcards": ["floor", "toilet", "shower", "clean", "dirty", "Ll", "Do you want to clean the toilet? Yes. / No.", "My favorite color is..."]}, {"id": "2026-11-w3-pe", "category": "体能", "subject": "体能", "content": "教具运用：跳绳\n教学内容：改正每个人的错误动作", "mastery": "教学目标：会跳绳，身体协调性，用小臂跟手腕摇绳", "advice": "在家继续练习手腕摇绳与连续跳绳。", "aids": ["跳绳"], "widgets": {"counter": {"target": 10, "unit": "个", "label": "跳绳连续挑战"}}}, {"id": "2026-11-w3-chess", "category": "国际象棋", "subject": "国际象棋", "content": "兵升变及走法总结\n知识重点：\n1、兵升变：冲到对方底线可升变为车马象后任意棋子，不可升变王，也不可不升变。\n2. 升变的棋子替换跑到终点的小兵，放到格内，换下的小兵完成使命从棋盘上拿掉，然后轮到对方走棋。", "mastery": "对弈练习，引导小兵升变", "advice": "家中对弈，尝试升变", "aids": ["国际象棋"]}, {"id": "2026-11-w3-self", "category": "自我管理", "subject": "自我管理", "content": "整理衣服", "mastery": "大部分幼儿已建立自己的事情自己做的自理意识，能够主动参与衣物整理。", "advice": "日常起床、睡前、换衣后，坚持让幼儿自己完成脱衣、穿衣、叠衣、收纳全过程。", "aids": []}, {"id": "2026-11-w3-art", "category": "创意美术", "subject": "创意美术", "content": "波浪线扭扭虫", "mastery": "幼儿基本掌握了波浪线、曲线的绘画方法，能够做出身体弯弯、灵动可爱的扭扭虫", "advice": "在家可以带孩子多练习波浪线、曲线、螺旋线等趣味线条绘画。", "aids": ["画纸/画笔"]}, {"id": "2026-11-w3-fencing", "category": "击剑", "subject": "击剑", "content": "1.跑跳练习：收腹跳，摸高跳\n2.基础专项：步伐移动，弓步刺\n3.分组：握剑练习：弓步刺/立定跳远", "mastery": "1.提高身体素质，锻炼增强腿部力量。\n2.稳固基础，提高对步伐移动的熟练感，培养进攻意识，在移动中锻炼进攻。\n3.增强握剑手腕力量，“弓步”/“立定跳远”锻炼提高腿部耐力和腿部爆发力。", "advice": "在家可和爸爸妈妈玩摸高跳与收腹跳小挑战。", "aids": []}]}];
+
+    const CATEGORY_META = {
+      "数理逻辑": { icon: "🔢", hue: 215 },
+      "语言素养": { icon: "📖", hue: 18 },
+      "思维课程": { icon: "🧊", hue: 268 },
+      "英语": { icon: "🔤", hue: 195 },
+      "体能": { icon: "🏀", hue: 145 },
+      "国际象棋": { icon: "♟️", hue: 38 },
+      "创意美术": { icon: "🎨", hue: 330 },
+      "自我管理": { icon: "🌱", hue: 162 },
+      "击剑": { icon: "🤺", hue: 245 }
+    };
+
+    const STORAGE_KEY = "dafu_learning_state_v1";
+    const urlParams = new URLSearchParams(window.location.search);
+    const defaultRoom = urlParams.get("room") || localStorage.getItem("dafu_room_key") || "dafu-youer-2026-family";
+
+    let appState = {
+      roomKey: defaultRoom,
+      actor: localStorage.getItem("dafu_actor") || "👨 爸爸",
+      viewMode: "week",           // "week" | "subject"
+      currentWeekId: "2026-11-w3",// 默认最新一周：11月第3周
+      filter: "all",              // "all" | "todo" | "review" | "done" | "has-aids" | "has-video"
+      searchQuery: "",
+      records: {},                // { [itemId]: { status, count, bestTime, note, coinEarned, actor, updatedAt } }
+      customItems: []             // 用户通过界面新增的周次/条目
+    };
+
+    // Load local state
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed.records) appState.records = parsed.records;
+        if (Array.isArray(parsed.customItems)) appState.customItems = parsed.customItems;
+      }
+    } catch (e) {
+      console.warn("Local storage load warning:", e);
+    }
+
+    function getAllWeeks() {
+      const weeks = JSON.parse(JSON.stringify(BUILTIN_WEEKS));
+      for (const custom of appState.customItems) {
+        let w = weeks.find(x => x.title === custom.weekTitle || x.weekId === custom.weekId);
+        if (!w) {
+          w = {
+            weekId: custom.weekId || ("custom-" + custom.weekTitle),
+            title: custom.weekTitle,
+            month: "新增",
+            isReviewWeek: false,
+            items: []
+          };
+          weeks.push(w);
+        }
+        w.items.push(custom.item);
+      }
+      return weeks;
+    }
+
+    function getRecord(itemId) {
+      return appState.records[itemId] || {
+        status: "todo",
+        count: 0,
+        bestTime: null,
+        note: "",
+        coinEarned: false,
+        actor: "",
+        updatedAt: 0
+      };
+    }
+
+    function updateRecord(itemId, patch) {
+      const prev = getRecord(itemId);
+      appState.records[itemId] = {
+        ...prev,
+        ...patch,
+        actor: appState.actor,
+        updatedAt: Date.now()
+      };
+      saveLocalAndSyncCloud();
+      renderApp();
+    }
+
+    function saveLocal() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          records: appState.records,
+          customItems: appState.customItems,
+          updatedAt: Date.now()
+        }));
+      } catch (e) {
+        console.warn("Save local error:", e);
+      }
+    }
+
+    // Cloud Sync (TextDB Persistent KV + ntfy live notification)
+    let syncTimer = null;
+    function setSyncBadge(state, text) {
+      const badge = document.getElementById("btn-cloud-sync");
+      const label = document.getElementById("sync-status-text");
+      if (badge && label) {
+        badge.setAttribute("data-sync-state", state);
+        label.textContent = text;
+      }
+    }
+
+    function mergeRemotePayload(remote) {
+      if (!remote || typeof remote !== "object") return false;
+      let changed = false;
+      if (remote.records && typeof remote.records === "object") {
+        for (const [id, rRec] of Object.entries(remote.records)) {
+          const lRec = appState.records[id];
+          if (!lRec || (rRec.updatedAt || 0) > (lRec.updatedAt || 0)) {
+            appState.records[id] = rRec;
+            changed = true;
+          }
+        }
+      }
+      if (Array.isArray(remote.customItems)) {
+        const existingIds = new Set(appState.customItems.map(x => x.item.id));
+        for (const c of remote.customItems) {
+          if (c && c.item && !existingIds.has(c.item.id)) {
+            appState.customItems.push(c);
+            changed = true;
+          }
+        }
+      }
+      if (changed) {
+        saveLocal();
+        renderApp();
+      }
+      return changed;
+    }
+
+    async function pullFromCloud(showLog = false) {
+      setSyncBadge("syncing", "正在同步...");
+      const logEl = document.getElementById("cloud-log-msg");
+      try {
+        const resp = await fetch("https://textdb.dev/api/data/" + encodeURIComponent(appState.roomKey), {
+          method: "GET",
+          cache: "no-store"
+        });
+        if (resp.ok) {
+          const text = await resp.text();
+          if (text && text.trim().startsWith("{")) {
+            const data = JSON.parse(text);
+            mergeRemotePayload(data);
+          }
+          setSyncBadge("synced", "云端已同步");
+          if (showLog && logEl) logEl.textContent = "✅ 已从云端拉取并合并最新学习进度（" + new Date().toLocaleTimeString() + "）";
+          return;
+        }
+      } catch (err) {
+        console.warn("Cloud pull fallback:", err);
+      }
+      setSyncBadge("offline", "本地已保存");
+      if (showLog && logEl) logEl.textContent = "⚠️ 当前处于离线缓存模式，进度已安全保存在本机，联网后自动同步。";
+    }
+
+    async function pushToCloud(showLog = false) {
+      setSyncBadge("syncing", "正在保存云端...");
+      const logEl = document.getElementById("cloud-log-msg");
+      const payload = JSON.stringify({
+        app: "dafu-learning-workbench",
+        roomKey: appState.roomKey,
+        records: appState.records,
+        customItems: appState.customItems,
+        updatedAt: Date.now()
+      });
+      try {
+        const resp = await fetch("https://textdb.dev/api/data/" + encodeURIComponent(appState.roomKey), {
+          method: "POST",
+          headers: { "Content-Type": "text/plain" },
+          body: payload
+        });
+        if (resp.ok) {
+          setSyncBadge("synced", "云端已同步");
+          if (showLog && logEl) logEl.textContent = "✅ 已成功上传至云端（" + new Date().toLocaleTimeString() + "），爸爸iPad与妈妈手机均已同步！";
+          return;
+        }
+      } catch (err) {
+        console.warn("Cloud push error:", err);
+      }
+      setSyncBadge("offline", "已存本机");
+      if (showLog && logEl) logEl.textContent = "⚠️ 暂未连接外网，已保存在本机浏览器中。";
+    }
+
+    function saveLocalAndSyncCloud() {
+      saveLocal();
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(() => {
+        pushToCloud(false);
+      }, 450);
+    }
+
+    // Populate Week Selector
+    function populateWeekSelect() {
+      const weeks = getAllWeeks();
+      const select = document.getElementById("week-select");
+      select.innerHTML = "";
+      for (const w of weeks) {
+        const opt = document.createElement("option");
+        opt.value = w.weekId;
+        opt.textContent = w.title + (w.isReviewWeek ? " [复习周]" : "");
+        if (w.weekId === appState.currentWeekId) opt.selected = true;
+        select.appendChild(opt);
+      }
+      const idx = weeks.findIndex(w => w.weekId === appState.currentWeekId);
+      document.getElementById("btn-prev-week").disabled = (idx <= 0);
+      document.getElementById("btn-next-week").disabled = (idx < 0 || idx >= weeks.length - 1);
+    }
+
+    function itemMatchesFilter(item) {
+      const rec = getRecord(item.id);
+      if (appState.filter === "todo" && rec.status !== "todo") return false;
+      if (appState.filter === "review" && rec.status !== "review") return false;
+      if (appState.filter === "done" && rec.status !== "done") return false;
+      if (appState.filter === "has-aids" && (!item.aids || item.aids.length === 0)) return false;
+      if (appState.filter === "has-video" && (!item.links || item.links.length === 0)) return false;
+
+      if (appState.searchQuery) {
+        const q = appState.searchQuery.toLowerCase();
+        const hay = [
+          item.category,
+          item.subject,
+          item.content,
+          item.mastery,
+          item.advice,
+          ...(item.aids || []),
+          rec.note || ""
+        ].join(" ").toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    }
+
+    function renderCardHTML(item, weekTitle, showWeekTag) {
+      const rec = getRecord(item.id);
+      const aidsHTML = (item.aids && item.aids.length > 0)
+        ? `<div style="display:flex;flex-wrap:wrap;gap:0.35rem;">` +
+          item.aids.map(a => `<span class="aid-chip">🧩 需准备教具：${escapeHTML(a)}</span>`).join("") +
+          `</div>`
+        : "";
+
+      const linksHTML = (item.links && item.links.length > 0)
+        ? `<div class="qr-links-box">` +
+          item.links.map(l => `
+            <a href="${escapeHTML(l.url)}" target="_blank" rel="noopener noreferrer" class="alo7-link-btn">
+              <span>${escapeHTML(l.label)}</span>
+              <span>点开直达 ↗</span>
+            </a>
+          `).join("") +
+          `</div>`
+        : "";
+
+      const diagramHTML = item.diagram && INLINE_DIAGRAMS[item.diagram.key]
+        ? `<figure class="diagram-figure" data-preview-key="${escapeHTML(item.diagram.key)}" data-preview-caption="${escapeHTML(item.diagram.caption)}">
+             <img src="${INLINE_DIAGRAMS[item.diagram.key]}" alt="${escapeHTML(item.diagram.caption)}" width="${item.diagram.width}" height="${item.diagram.height}" loading="lazy">
+             <figcaption>🔍 ${escapeHTML(item.diagram.caption)}（点击放大）</figcaption>
+           </figure>`
+        : "";
+
+      // Interactive tools (Flashcards, Counter, Timer, Youer Coin)
+      const tools = [];
+      if (item.flashcards && item.flashcards.length > 0) {
+        tools.push(`<button type="button" class="tool-btn flashcard-trigger" data-action="flashcard" data-item-id="${escapeHTML(item.id)}">🎴 互动闪卡 (${item.flashcards.length})</button>`);
+      }
+      if (item.widgets && item.widgets.counter) {
+        const c = item.widgets.counter;
+        tools.push(`<button type="button" class="tool-btn counter-trigger" data-action="increment-counter" data-item-id="${escapeHTML(item.id)}">➕ ${escapeHTML(c.label)}：<strong>${rec.count || 0}/${c.target}${escapeHTML(c.unit)}</strong></button>`);
+      }
+      if (item.widgets && item.widgets.timer) {
+        const bestLabel = rec.bestTime ? ` (最佳 ${rec.bestTime}s)` : "";
+        tools.push(`<button type="button" class="tool-btn timer-trigger" data-action="open-timer" data-item-id="${escapeHTML(item.id)}" data-item-title="${escapeHTML(weekTitle + ' · ' + item.subject)}">⏱️ 计时挑战${escapeHTML(bestLabel)}</button>`);
+      }
+      if (item.widgets && item.widgets.youer_coin) {
+        const earned = !!rec.coinEarned;
+        tools.push(`<button type="button" class="tool-btn coin-trigger" data-earned="${earned}" data-action="toggle-coin" data-item-id="${escapeHTML(item.id)}">🏅 ${earned ? "已赢5优尔币" : "拍视频赢5优尔币"}</button>`);
+      }
+
+      const toolsHTML = tools.length > 0 ? `<div class="interactive-toolbar">${tools.join("")}</div>` : "";
+      const stampText = rec.updatedAt
+        ? `最后打卡于 ${new Date(rec.updatedAt).toLocaleDateString()} ${new Date(rec.updatedAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`
+        : "尚未打卡";
+
+      const isDone = rec.status === "done";
+      const quickCheckinBtn = isDone
+        ? `<button type="button" class="tool-btn" style="width:100%;justify-content:center;padding:0.6rem;background:#16a34a;color:#fff;border-color:#15803d;font-size:0.92rem;" data-action="set-status" data-item-id="${escapeHTML(item.id)}" data-val="todo">✅ 已完成打卡（点击可撤销）</button>`
+        : `<button type="button" class="tool-btn" style="width:100%;justify-content:center;padding:0.6rem;background:#fff7ed;color:#ea580c;border:2px solid #fb923c;font-size:0.92rem;" data-action="set-status" data-item-id="${escapeHTML(item.id)}" data-val="done">⭕ 点击此处打卡完成</button>`;
+
+      return `
+        <article class="task-card" data-status="${escapeHTML(rec.status)}" data-item-id="${escapeHTML(item.id)}">
+          <div class="card-top-bar">
+            <div class="subject-tag-group">
+              <h3 class="subject-title">${escapeHTML(item.subject)}</h3>
+              ${showWeekTag ? `<span class="week-ref-tag">${escapeHTML(weekTitle)}</span>` : ""}
+            </div>
+            <div class="status-group" role="group" aria-label="${escapeHTML(item.subject)}掌握状态">
+              <button type="button" class="status-btn" data-action="set-status" data-item-id="${escapeHTML(item.id)}" data-val="todo" aria-pressed="${rec.status === 'todo'}">⏳ 待复习</button>
+              <button type="button" class="status-btn" data-action="set-status" data-item-id="${escapeHTML(item.id)}" data-val="review" aria-pressed="${rec.status === 'review'}">🌱 需巩固</button>
+              <button type="button" class="status-btn" data-action="set-status" data-item-id="${escapeHTML(item.id)}" data-val="done" aria-pressed="${rec.status === 'done'}">⭐ 已掌握</button>
+            </div>
+          </div>
+
+          ${aidsHTML}
+
+          <div class="info-block block-content">
+            <div class="info-block-label">📘 教学内容</div>
+            <div>${escapeHTML(item.content)}</div>
+          </div>
+
+          <div class="info-block block-mastery">
+            <div class="info-block-label">👧 班级幼儿掌握情况</div>
+            <div>${escapeHTML(item.mastery)}</div>
+          </div>
+
+          <div class="info-block block-advice">
+            <div class="info-block-label">🏡 家庭教育建议与亲子玩法</div>
+            <div>${escapeHTML(item.advice)}</div>
+          </div>
+
+          ${linksHTML}
+          ${diagramHTML}
+          ${toolsHTML}
+
+          <div class="card-footer-meta">
+            ${quickCheckinBtn}
+            <div class="note-input-row">
+              <input type="text" class="note-input" data-action="edit-note" data-item-id="${escapeHTML(item.id)}" value="${escapeHTML(rec.note || '')}" placeholder="✏️ 添加大福复习备注（如：数字8还需练、古诗已背熟）..." aria-label="大福复习备注">
+            </div>
+            <div class="stamp-line">
+              <span>${stampText}</span>
+              ${rec.count > 0 ? `<span>累计打卡 ${rec.count} 次</span>` : ""}
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderApp() {
+      populateWeekSelect();
+      const weeks = getAllWeeks();
+      const mainEl = document.getElementById("workbench-main");
+      const weekNav = document.getElementById("week-nav-controls");
+
+      // Calculate global coins & current scope stats
+      let totalCoins = 0;
+      for (const w of weeks) {
+        for (const it of w.items) {
+          if (it.widgets && it.widgets.youer_coin && getRecord(it.id).coinEarned) {
+            totalCoins += it.widgets.youer_coin;
+          }
+        }
+      }
+
+      let scopeItems = [];
+      let scopeHeading = "";
+      if (appState.viewMode === "week") {
+        weekNav.style.display = "flex";
+        const curWeek = weeks.find(w => w.weekId === appState.currentWeekId) || weeks[weeks.length - 1];
+        scopeItems = curWeek.items.map(it => ({ item: it, weekTitle: curWeek.title }));
+        scopeHeading = curWeek.title;
+      } else {
+        weekNav.style.display = "none";
+        scopeHeading = "8月～11月 全科目专项纵览（共 " + weeks.length + " 周）";
+        for (const w of weeks) {
+          for (const it of w.items) {
+            scopeItems.push({ item: it, weekTitle: w.title });
+          }
+        }
+      }
+
+      // Compute progress for current scope
+      const totalCount = scopeItems.length;
+      let doneCount = 0;
+      let reviewCount = 0;
+      const aidsSet = new Set();
+      for (const { item } of scopeItems) {
+        const st = getRecord(item.id).status;
+        if (st === "done") doneCount++;
+        if (st === "review") reviewCount++;
+        if (item.aids) item.aids.forEach(a => aidsSet.add(a));
+      }
+      const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+
+      document.getElementById("current-view-heading").textContent = scopeHeading;
+      document.getElementById("progress-ratio-text").textContent = `已掌握 ${doneCount} / ${totalCount} 项 (${pct}%)`;
+      const progBar = document.getElementById("main-progressbar");
+      const progFill = document.getElementById("main-progress-fill");
+      progBar.setAttribute("aria-valuenow", String(pct));
+      progFill.style.setProperty("--progress-pct", pct + "%");
+
+      document.getElementById("stat-done-count").textContent = String(doneCount);
+      document.getElementById("stat-review-count").textContent = String(reviewCount);
+      document.getElementById("stat-coins-count").textContent = String(totalCoins);
+
+      // Render teaching aids summary bar
+      const aidsBar = document.getElementById("week-aids-bar");
+      if (aidsSet.size > 0) {
+        aidsBar.innerHTML = `<span class="aids-summary-label">🧰 本周需准备教具清单：</span>` +
+          Array.from(aidsSet).map(a => `<span class="aid-chip">🧩 ${escapeHTML(a)}</span>`).join("");
+      } else {
+        aidsBar.innerHTML = "";
+      }
+
+      // Group filtered items by Category
+      const filtered = scopeItems.filter(({ item }) => itemMatchesFilter(item));
+      if (filtered.length === 0) {
+        mainEl.innerHTML = `
+          <div style="text-align:center;padding:3rem 1rem;background:var(--bg-card);border-radius:var(--radius-lg);border:1px dashed var(--border-soft);">
+            <p style="font-size:1.1rem;font-weight:700;color:var(--text-secondary);">没有找到符合当前筛选条件的复习项目</p>
+            <p style="font-size:0.88rem;color:var(--text-muted);margin-top:0.4rem;">可以点击上方“全部项目”或清空搜索框查看完整列表</p>
+          </div>
+        `;
+        return;
+      }
+
+      const grouped = new Map();
+      for (const entry of filtered) {
+        const cat = entry.item.category;
+        if (!grouped.has(cat)) grouped.set(cat, []);
+        grouped.get(cat).push(entry);
+      }
+
+      let html = "";
+      for (const [cat, entries] of grouped.entries()) {
+        const meta = CATEGORY_META[cat] || { icon: "📌", hue: 200 };
+        const catDone = entries.filter(e => getRecord(e.item.id).status === "done").length;
+        html += `
+          <section class="category-section" aria-label="${escapeHTML(cat)}">
+            <div class="category-header">
+              <h2 class="category-title">
+                <span aria-hidden="true">${meta.icon}</span>
+                <span>${escapeHTML(cat)}</span>
+              </h2>
+              <span class="category-badge" style="--cat-hue: ${meta.hue};">已完成 ${catDone} / ${entries.length}</span>
+            </div>
+            <div class="cards-grid">
+              ${entries.map(e => renderCardHTML(e.item, e.weekTitle, appState.viewMode === "subject")).join("")}
+            </div>
+          </section>
+        `;
+      }
+      mainEl.innerHTML = html;
+    }
+
+    function escapeHTML(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function findItemById(itemId) {
+      for (const w of getAllWeeks()) {
+        for (const it of w.items) {
+          if (it.id === itemId) return { item: it, week: w };
+        }
+      }
+      return null;
+    }
+
+    // Flashcard Modal Logic
+    let fcState = { list: [], index: 0, title: "" };
+    function openFlashcards(itemId) {
+      const found = findItemById(itemId);
+      if (!found || !found.item.flashcards) return;
+      fcState.list = [...found.item.flashcards];
+      fcState.index = 0;
+      fcState.title = `${found.week.title} · ${found.item.subject} 闪卡`;
+      document.getElementById("flashcard-dialog-title").textContent = "🎴 " + fcState.title;
+      updateFlashcardUI();
+      document.getElementById("dialog-flashcard").showModal();
+    }
+
+    function updateFlashcardUI() {
+      const total = fcState.list.length;
+      if (total === 0) return;
+      document.getElementById("flashcard-progress").textContent = `第 ${fcState.index + 1} / ${total} 张（点击卡片或按钮切换）`;
+      document.getElementById("flashcard-box").textContent = fcState.list[fcState.index];
+    }
+
+    // Timer Modal Logic
+    let timerState = { itemId: null, running: false, startTime: 0, elapsedMs: 0, rafId: null };
+    function openTimerModal(itemId, title) {
+      stopTimerLoop();
+      timerState.itemId = itemId;
+      timerState.elapsedMs = 0;
+      document.getElementById("timer-item-name").textContent = title;
+      document.getElementById("timer-readout").textContent = "00:00.0";
+      document.getElementById("btn-timer-toggle").textContent = "▶️ 开始计时";
+      const rec = getRecord(itemId);
+      document.getElementById("timer-best-record").textContent = rec.bestTime ? `🏆 大福当前最佳记录：${rec.bestTime} 秒` : "暂无最佳记录，快来挑战第一次吧！";
+      document.getElementById("dialog-timer").showModal();
+    }
+
+    function formatTimerMs(ms) {
+      const totalSec = ms / 1000;
+      const mins = Math.floor(totalSec / 60);
+      const secs = (totalSec % 60).toFixed(1);
+      return String(mins).padStart(2, "0") + ":" + String(secs).padStart(4, "0");
+    }
+
+    function tickTimer() {
+      if (!timerState.running) return;
+      const now = performance.now();
+      const total = timerState.elapsedMs + (now - timerState.startTime);
+      document.getElementById("timer-readout").textContent = formatTimerMs(total);
+      timerState.rafId = requestAnimationFrame(tickTimer);
+    }
+
+    function stopTimerLoop() {
+      if (timerState.running) {
+        timerState.elapsedMs += (performance.now() - timerState.startTime);
+        timerState.running = false;
+      }
+      if (timerState.rafId) cancelAnimationFrame(timerState.rafId);
+    }
+
+    // Setup Event Listeners (No inline onclick)
+    document.addEventListener("DOMContentLoaded", () => {
+      // Mandatory Light-Dismiss Fallback for Browsers without native <dialog closedby="any"> (e.g., iOS/iPadOS Safari)
+      document.querySelectorAll("dialog").forEach(dialog => {
+        if (!("closedBy" in HTMLDialogElement.prototype)) {
+          dialog.addEventListener("click", (event) => {
+            if (event.target !== dialog) return;
+            const rect = dialog.getBoundingClientRect();
+            const isDialogContent = (
+              rect.top <= event.clientY &&
+              event.clientY <= rect.top + rect.height &&
+              rect.left <= event.clientX &&
+              event.clientX <= rect.left + rect.width
+            );
+            if (isDialogContent) return;
+            dialog.close();
+          });
+        }
+      });
+
+      // Close buttons inside dialogs
+      document.querySelectorAll("[data-close-dialog]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-close-dialog");
+          stopTimerLoop();
+          document.getElementById(id).close();
+        });
+      });
+
+      // View Tabs (Week View vs Subject View)
+      document.querySelectorAll(".mode-tab").forEach(tab => {
+        tab.addEventListener("click", () => {
+          appState.viewMode = tab.getAttribute("data-view");
+          document.querySelectorAll(".mode-tab").forEach(t => {
+            t.setAttribute("aria-selected", String(t === tab));
+          });
+          renderApp();
+        });
+      });
+
+      // Week Select & Prev/Next
+      document.getElementById("week-select").addEventListener("change", (e) => {
+        appState.currentWeekId = e.target.value;
+        renderApp();
+      });
+
+      document.getElementById("btn-prev-week").addEventListener("click", () => {
+        const weeks = getAllWeeks();
+        const idx = weeks.findIndex(w => w.weekId === appState.currentWeekId);
+        if (idx > 0) {
+          appState.currentWeekId = weeks[idx - 1].weekId;
+          renderApp();
+        }
+      });
+
+      document.getElementById("btn-next-week").addEventListener("click", () => {
+        const weeks = getAllWeeks();
+        const idx = weeks.findIndex(w => w.weekId === appState.currentWeekId);
+        if (idx >= 0 && idx < weeks.length - 1) {
+          appState.currentWeekId = weeks[idx + 1].weekId;
+          renderApp();
+        }
+      });
+
+      // Filter pills
+      document.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          appState.filter = btn.getAttribute("data-filter");
+          document.querySelectorAll(".filter-btn").forEach(b => {
+            b.setAttribute("aria-pressed", String(b === btn));
+          });
+          renderApp();
+        });
+      });
+
+      // Keyword search
+      document.getElementById("keyword-search").addEventListener("input", (e) => {
+        appState.searchQuery = e.target.value.trim();
+        renderApp();
+      });
+
+      // Delegated clicks inside main workbench
+      const mainEl = document.getElementById("workbench-main");
+      mainEl.addEventListener("click", (e) => {
+        const fig = e.target.closest("[data-preview-key]");
+        if (fig) {
+          const key = fig.getAttribute("data-preview-key");
+          const cap = fig.getAttribute("data-preview-caption");
+          document.getElementById("image-dialog-title").textContent = "📷 " + cap;
+          document.getElementById("preview-img-el").src = INLINE_DIAGRAMS[key];
+          document.getElementById("preview-img-caption").textContent = cap;
+          document.getElementById("dialog-image").showModal();
+          return;
+        }
+
+        const btn = e.target.closest("[data-action]");
+        if (!btn) return;
+        const action = btn.getAttribute("data-action");
+        const itemId = btn.getAttribute("data-item-id");
+
+        if (action === "set-status") {
+          const val = btn.getAttribute("data-val");
+          updateRecord(itemId, { status: val });
+        } else if (action === "increment-counter") {
+          const rec = getRecord(itemId);
+          const nextCount = (rec.count || 0) + 1;
+          const found = findItemById(itemId);
+          const target = found && found.item.widgets && found.item.widgets.counter ? found.item.widgets.counter.target : 5;
+          const nextStatus = (nextCount >= target && rec.status === "todo") ? "done" : rec.status;
+          updateRecord(itemId, { count: nextCount, status: nextStatus });
+        } else if (action === "toggle-coin") {
+          const rec = getRecord(itemId);
+          updateRecord(itemId, { coinEarned: !rec.coinEarned, status: !rec.coinEarned ? "done" : rec.status });
+        } else if (action === "flashcard") {
+          openFlashcards(itemId);
+        } else if (action === "open-timer") {
+          openTimerModal(itemId, btn.getAttribute("data-item-title"));
+        }
+      });
+
+      // Delegated note input change
+      mainEl.addEventListener("change", (e) => {
+        const input = e.target.closest("[data-action='edit-note']");
+        if (!input) return;
+        const itemId = input.getAttribute("data-item-id");
+        updateRecord(itemId, { note: input.value.trim() });
+      });
+
+      // Flashcard Controls
+      document.getElementById("flashcard-box").addEventListener("click", () => {
+        if (fcState.list.length > 0) {
+          fcState.index = (fcState.index + 1) % fcState.list.length;
+          updateFlashcardUI();
+        }
+      });
+      document.getElementById("btn-fc-prev").addEventListener("click", () => {
+        if (fcState.list.length > 0) {
+          fcState.index = (fcState.index - 1 + fcState.list.length) % fcState.list.length;
+          updateFlashcardUI();
+        }
+      });
+      document.getElementById("btn-fc-next").addEventListener("click", () => {
+        if (fcState.list.length > 0) {
+          fcState.index = (fcState.index + 1) % fcState.list.length;
+          updateFlashcardUI();
+        }
+      });
+      document.getElementById("btn-fc-random").addEventListener("click", () => {
+        if (fcState.list.length > 1) {
+          fcState.index = Math.floor(Math.random() * fcState.list.length);
+          updateFlashcardUI();
+        }
+      });
+
+      // Timer Controls
+      document.getElementById("btn-timer-toggle").addEventListener("click", () => {
+        const btn = document.getElementById("btn-timer-toggle");
+        if (!timerState.running) {
+          timerState.running = true;
+          timerState.startTime = performance.now();
+          btn.textContent = "⏸️ 暂停";
+          timerState.rafId = requestAnimationFrame(tickTimer);
+        } else {
+          stopTimerLoop();
+          btn.textContent = "▶️ 继续";
+        }
+      });
+      document.getElementById("btn-timer-reset").addEventListener("click", () => {
+        stopTimerLoop();
+        timerState.elapsedMs = 0;
+        document.getElementById("timer-readout").textContent = "00:00.0";
+        document.getElementById("btn-timer-toggle").textContent = "▶️ 开始计时";
+      });
+      document.getElementById("btn-timer-save").addEventListener("click", () => {
+        stopTimerLoop();
+        document.getElementById("btn-timer-toggle").textContent = "▶️ 开始计时";
+        if (!timerState.itemId || timerState.elapsedMs < 500) return;
+        const sec = Number((timerState.elapsedMs / 1000).toFixed(1));
+        const rec = getRecord(timerState.itemId);
+        const best = (!rec.bestTime || sec < rec.bestTime) ? sec : rec.bestTime;
+        updateRecord(timerState.itemId, { bestTime: best, count: (rec.count || 0) + 1 });
+        document.getElementById("timer-best-record").textContent = `🏆 已保存！本次 ${sec} 秒，最佳记录：${best} 秒`;
+      });
+
+      // View original feedback sheet image
+      document.getElementById("btn-open-sheet").addEventListener("click", () => {
+        const weeks = getAllWeeks();
+        const cur = weeks.find(w => w.weekId === appState.currentWeekId) || weeks[weeks.length - 1];
+        const imgEl = document.getElementById("preview-img-el");
+        document.getElementById("image-dialog-title").textContent = "📄 " + cur.title + " 幼儿园反馈表原件";
+        imgEl.src = "sheets/" + cur.weekId + ".webp";
+        document.getElementById("preview-img-caption").textContent = cur.title + " 原始教学内容反馈表（若在纯单文件模式下未附带 sheets 目录，可直接参考主界面完整文字与裁剪图示）";
+        document.getElementById("dialog-image").showModal();
+      });
+
+      // Cloud Sync Modal
+      document.getElementById("btn-cloud-sync").addEventListener("click", () => {
+        document.getElementById("input-room-key").value = appState.roomKey;
+        document.getElementById("dialog-cloud").showModal();
+      });
+      document.getElementById("btn-save-room").addEventListener("click", () => {
+        const val = document.getElementById("input-room-key").value.trim();
+        if (val) {
+          appState.roomKey = val;
+          localStorage.setItem("dafu_room_key", val);
+          pullFromCloud(true);
+        }
+      });
+      document.getElementById("btn-force-pull").addEventListener("click", () => pullFromCloud(true));
+      document.getElementById("btn-force-push").addEventListener("click", () => pushToCloud(true));
+
+      // Export & Import JSON backup
+      document.getElementById("btn-export-json").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify({
+          app: "dafu-learning-workbench",
+          exportedAt: new Date().toISOString(),
+          records: appState.records,
+          customItems: appState.customItems
+        }, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `大福的学习闯关_进度备份_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+      });
+      document.getElementById("input-import-json").addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            mergeRemotePayload(data);
+            pushToCloud(true);
+          } catch (err) {
+            alert("导入文件格式有误，请选择导出的 JSON 备份文件。");
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      // Add New Week / Item Modal
+      document.getElementById("btn-add-item").addEventListener("click", () => {
+        document.getElementById("dialog-add").showModal();
+      });
+      document.getElementById("form-add-item").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const weekTitle = document.getElementById("add-week-title").value.trim();
+        const category = document.getElementById("add-category").value;
+        const subject = document.getElementById("add-subject").value.trim();
+        const content = document.getElementById("add-content").value.trim();
+        const mastery = document.getElementById("add-mastery").value.trim() || "课堂学习良好";
+        const advice = document.getElementById("add-advice").value.trim() || "在家亲子互动巩固";
+        const aidsRaw = document.getElementById("add-aids").value.trim();
+        const linkRaw = document.getElementById("add-link").value.trim();
+
+        const weekId = "custom-" + weekTitle.replace(/\s+/g, "-");
+        const newItem = {
+          id: weekId + "-" + Date.now(),
+          category,
+          subject,
+          content,
+          mastery,
+          advice,
+          aids: aidsRaw ? aidsRaw.split(/[,，]/).map(s => s.trim()).filter(Boolean) : [],
+          links: linkRaw ? [{ label: "🎬 教学视频/跟读直达链接", url: linkRaw }] : []
+        };
+        appState.customItems.push({ weekId, weekTitle, item: newItem });
+        const existingWeek = getAllWeeks().find(w => w.title === weekTitle || w.weekId === weekId);
+        if (existingWeek) appState.currentWeekId = existingWeek.weekId;
+        saveLocalAndSyncCloud();
+        renderApp();
+        e.target.reset();
+        document.getElementById("dialog-add").close();
+      });
+
+      // Initial Render & Cloud Pull
+      renderApp();
+      pullFromCloud(false);
+    });
+  </script>
+</body>
+</html>
